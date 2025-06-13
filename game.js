@@ -34,7 +34,6 @@ let myPlayerId = generateId();
 let gameId = "GAME_001"; // ID Room (bisa diganti)
 let currentPlayer = null;
 
-// Inisialisasi Papan
 function initBoard() {
   const board = document.getElementById('board');
   board.innerHTML = '';
@@ -46,6 +45,15 @@ function initBoard() {
       cell.className = 'cell';
       cell.id = `cell-${cellNum}`;
       cell.textContent = cellNum;
+      
+      // Tambahkan class khusus untuk ular/tangga
+      if (snakesAndLadders[cellNum]) {
+        cell.classList.add(
+          snakesAndLadders[cellNum] > cellNum ? 'ladder' : 'snake'
+        );
+        cell.title = `Dari ${cellNum} ke ${snakesAndLadders[cellNum]}`;
+      }
+      
       board.appendChild(cell);
     }
   }
