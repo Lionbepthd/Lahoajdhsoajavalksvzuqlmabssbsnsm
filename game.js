@@ -334,3 +334,243 @@ async function resetGame() {
     alert("Gagal mereset game. Coba lagi.");
   }
 }
+// Configuration
+const MAX_PLAYERS_PER_ROOM = 4;
+const INACTIVITY_TIMEOUT = 10000; // 10 seconds
+let inactivityTimer;
+
+// Room Management
+async function createNewRoom() {
+  const roomCode = generateRoomCode();
+  gameId = roomCode;
+  isHost = true;
+  
+  try {
+    await set(ref(db, `games/${roomCode}`), {
+      roomCode,
+      players: {},
+      status: 'waiting',
+      createdAt: Date.now(),
+      hostId: myPlayerId
+    });
+    
+    await joinRoom(roomCode);
+    showRoomInfo(roomCode);
+    startInactivityTimer();
+  } catch (error) {
+    console.error("Error creating room:", error);
+    alert("Gagal membuat room. Coba lagi.");
+  }
+}
+
+async function joinRoom(roomCode) {
+  const roomRef = ref(db, `games/${roomCode}`);
+  const roomSnapshot = await get(roomRef);
+  
+  if (!roomSnapshot.exists()) {
+    alert("Room tidak ditemukan!");
+    return false;
+  }
+  
+  const roomData = roomSnapshot.val();
+  
+  if (Object.keys(roomData.players).length >= MAX_PLAYERS_PER_ROOM) {
+    alert("Room sudah penuh! Silakan buat room baru.");
+    return false;
+  }
+  
+  if (roomData.status !== 'waiting') {
+    alert("Game sudah dimulai di room ini!");
+    return false;
+  }
+  
+  gameId = roomCode;
+  
+  const playerRef = ref(db, `games/${roomCode}/players/${myPlayerId}`);
+  await set(playerRef, {
+    name: myPlayerName,
+    position: 1,
+    color: getNextColor(),
+    isHost: false,
+    joinedAt: Date.now(),
+    lastActive: Date.now()
+  });
+  
+  return true;
+}
+
+function generateRoomCode() {
+  return Math.random().toString(36).substring(2, 6).toUpperCase();
+}
+
+function showRoomInfo(roomCode) {
+  document.getElementById('roomCodeDisplay').textContent = roomCode;
+  document.getElementById('roomStatusDisplay').textContent = 'Menunggu pemain...';
+  document.getElementById('startGameBtn').style.display = isHost ? 'block' : 'none';
+  document.getElementById('roomInfoModal').style.display = 'flex';
+}
+
+// Inactivity Timer
+function startInactivityTimer() {
+  resetInactivityTimer();
+  
+  // Update last active timestamp periodically
+  setInterval(() => {
+    if (currentGame && myPlayerId) {
+      const playerRef = ref(db, `games/${gameId}/players/${myPlayerId}`);
+      update(playerRef, { lastActive: Date.now() });
+    }
+  }, 3000);
+}
+
+function resetInactivityTimer() {
+  if (inactivityTimer) clearTimeout(inactivityTimer);
+  
+  inactivityTimer = setTimeout(() => {
+    checkInactivePlayers();
+  }, INACTIVITY_TIMEOUT);
+}
+
+async function checkInactivePlayers() {
+  const roomRef = ref(db, `games/${gameId}`);
+  const roomSnapshot = await get(roomRef);
+  
+  if (!roomSnapshot.exists()) return;
+  
+  const roomData = roomSnapshot.val();
+  const now = Date.now();
+  let allPlayersActive = true;
+  
+  for (const [playerId, player] of Object.entries(roomData.players)) {
+    if (now - player.lastActive > INACTIVITY_TIMEOUT) {
+      allPlayersActive = false;
+      break;
+    }
+  }
+  
+  if (!allPlayersActive) {
+    endGameDueToInactivity();
+  } else {
+    resetInactivityTimer();
+  }
+}
+
+async function endGameDueToInactivity() {
+  statusElement.textContent = "Game dihentikan karena ada pemain tidak aktif";
+  
+  try {
+    // Remove the room
+    await remove(ref(db, `games/${gameId}`));
+    
+    // Show message to players
+    alert("Game dihentikan karena ada pemain tidak aktif. Room akan ditutup.");
+    
+    // Reset UI
+    resetGameUI();
+  } catch (error) {
+    console.error("Error ending game:", error);
+  }
+}
+
+// Room UI Event Listeners
+document.getElementById('createRoomBtn').addEventListener('click', async () => {
+  await createNewRoom();
+  roomModal.style.display = 'none';
+});
+
+document.getElementById('joinRoomBtn').addEventListener('click', async () => {
+  const roomCode = document.getElementById('roomCodeInput').value.trim().toUpperCase();
+  if (roomCode.length !== 4) {
+    alert("Kode room harus 4 karakter!");
+    return;
+  }
+  
+  const success = await joinRoom(roomCode);
+  if (success) {
+    roomModal.style.display = 'none';
+    showRoomInfo(roomCode);
+    startInactivityTimer();
+  }
+});
+
+document.getElementById('copyRoomCodeBtn').addEventListener('click', () => {
+  const roomCode = document.getElementById('roomCodeDisplay').textContent;
+  navigator.clipboard.writeText(roomCode);
+  alert("Kode room disalin!");
+});
+
+document.getElementById('startGameBtn').addEventListener('click', async () => {
+  if (!isHost) return;
+  
+  try {
+    await update(ref(db, `games/${gameId}`), {
+      status: 'playing',
+      currentPlayer: myPlayerId,
+      gameStarted: true,
+      startedAt: Date.now()
+    };
+    
+    document.getElementById('roomInfoModal').style.display = 'none';
+  } catch (error) {
+    console.error("Error starting game:", error);
+  }
+});
+
+// Update setupGameListener to handle room status
+function setupGameListener() {
+  if (!db) return;
+
+  const gameRef = ref(db, `games/${gameId}`);
+  
+  onValue(gameRef, (snapshot) => {
+    currentGame = snapshot.val();
+    if (!currentGame) {
+      console.log("Room ditutup");
+      alert("Room telah ditutup oleh host");
+      resetGameUI();
+      return;
+    }
+    
+    // Update room info modal if open
+    if (document.getElementById('roomInfoModal').style.display === 'flex') {
+      updateRoomInfoModal();
+    }
+    
+    updateGameUI();
+    updatePlayersUI();
+    updatePlayerPositions();
+    
+    // Reset timer on any game activity
+    resetInactivityTimer();
+  });
+}
+
+function updateRoomInfoModal() {
+  const playersList = document.getElementById('roomPlayersList');
+  playersList.innerHTML = '';
+  
+  Object.entries(currentGame.players).forEach(([id, player]) => {
+    const playerEl = document.createElement('div');
+    playerEl.className = 'player-info';
+    playerEl.innerHTML = `
+      <div class="player-marker" style="background: ${player.color}"></div>
+      <span>${player.name} ${id === myPlayerId ? '(Anda)' : ''} ${player.isHost ? '👑' : ''}</span>
+    `;
+    playersList.appendChild(playerEl);
+  });
+  
+  document.getElementById('roomStatusDisplay').textContent = 
+    currentGame.status === 'waiting' ? 'Menunggu pemain...' : 'Sedang bermain';
+}
+
+// Modify username submission flow
+async function handleUsernameSubmit() {
+  const username = usernameInput.value.trim();
+  if (username) {
+    myPlayerName = username;
+    usernameModal.style.display = 'none';
+    roomModal.style.display = 'flex'; // Show room selection after username
+  } else {
+    alert("Harap masukkan username!");
+  }
+}
