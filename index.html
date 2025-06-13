@@ -187,6 +187,29 @@
       <button id="submitUsername">Mulai Bermain</button>
     </div>
   </div>
+<!-- Add these new modals after the existing username modal -->
+<div id="roomModal" class="modal">
+  <div class="modal-content">
+    <h2>Pilih Room</h2>
+    <div id="roomOptions">
+      <button id="createRoomBtn">Buat Room Baru</button>
+      <div class="separator">ATAU</div>
+      <input type="text" id="roomCodeInput" placeholder="Masukkan kode room">
+      <button id="joinRoomBtn">Gabung Room</button>
+    </div>
+  </div>
+</div>
+
+<div id="roomInfoModal" class="modal">
+  <div class="modal-content">
+    <h2>Room Info</h2>
+    <p>Kode Room: <strong id="roomCodeDisplay"></strong></p>
+    <p>Status: <span id="roomStatusDisplay"></span></p>
+    <div id="roomPlayersList"></div>
+    <button id="copyRoomCodeBtn">Salin Kode Room</button>
+    <button id="startGameBtn" style="display:none;">Mulai Game</button>
+  </div>
+</div>
 
   <div id="game-container">
     <h1>🐍 Ular Tangga Multiplayer 🪜</h1>
