@@ -25,6 +25,7 @@ const colors = ['#FF5252', '#4CAF50', '#2196F3', '#FFC107'];
 let myPlayerId = generatePlayerId();
 let gameId = "GAME_001"; // ID room yang sama untuk semua pemain
 let currentGame = null;
+let myPlayerName = "";
 
 // Elemen UI
 const board = document.getElementById('board');
@@ -45,7 +46,6 @@ function initBoard() {
       cell.id = `cell-${cellNum}`;
       cell.textContent = cellNum;
       
-      // Tambahkan class khusus untuk ular/tangga
       if (snakesAndLadders[cellNum]) {
         cell.classList.add(
           snakesAndLadders[cellNum] > cellNum ? 'ladder' : 'snake'
@@ -58,12 +58,10 @@ function initBoard() {
   }
 }
 
-// Generate ID Pemain
 function generatePlayerId() {
   return 'P-' + Math.random().toString(36).substr(2, 9);
 }
 
-// Update tampilan pemain
 function updatePlayersUI(players) {
   playersElement.innerHTML = '';
   Object.entries(players).forEach(([id, player], index) => {
@@ -71,15 +69,13 @@ function updatePlayersUI(players) {
     playerEl.className = 'player-info';
     playerEl.innerHTML = `
       <div class="player-marker" style="background: ${player.color}"></div>
-      <span>${player.name} ${id === myPlayerId ? '(Anda)' : ''}</span>
+      <span>${player.name} ${id === myPlayerId ? '(Anda)' : ''} ${id === currentGame?.currentPlayer ? '🎮' : ''}</span>
     `;
     playersElement.appendChild(playerEl);
   });
 }
 
-// Update posisi pemain di papan
 function updatePlayerPositions(players) {
-  // Hapus semua pemain dari papan
   document.querySelectorAll('.player').forEach(el => el.remove());
   
   Object.entries(players).forEach(([id, player]) => {
@@ -96,57 +92,59 @@ function updatePlayerPositions(players) {
 }
 
 // Event Listeners
-startBtn.addEventListener('click', () => {
+startBtn.addEventListener('click', async () => {
   const playerName = prompt('Masukkan nama pemain:', `Player ${Object.keys(currentGame?.players || {}).length + 1}`);
   
   if (playerName) {
-    db.ref(`games/${gameId}`).set({
-      players: {
-        [myPlayerId]: {
-          name: playerName,
-          position: 1,
-          color: colors[Object.keys(currentGame?.players || {}).length % colors.length]
-        }
-      },
-      currentPlayer: myPlayerId,
-      diceValue: 0,
-      gameStarted: false
+    myPlayerName = playerName;
+    const playerCount = currentGame ? Object.keys(currentGame.players).length : 0;
+    
+    await db.ref(`games/${gameId}/players/${myPlayerId}`).set({
+      name: playerName,
+      position: 1,
+      color: colors[playerCount % colors.length]
     });
+    
+    // Jika ini pemain pertama, set sebagai currentPlayer
+    if (playerCount === 0) {
+      await db.ref(`games/${gameId}/currentPlayer`).set(myPlayerId);
+    }
+    
+    await db.ref(`games/${gameId}/gameStarted`).set(true);
   }
 });
 
 rollBtn.addEventListener('click', () => {
   if (currentGame?.currentPlayer === myPlayerId) {
     const dice = Math.floor(Math.random() * 6) + 1;
+    const player = currentGame.players[myPlayerId];
+    let newPosition = player.position + dice;
     
     db.ref(`games/${gameId}`).transaction(game => {
-      if (!game) return game;
+      if (!game) return null;
       
       // Update posisi pemain
-      const player = game.players[myPlayerId];
-      let newPosition = player.position + dice;
+      game.players[myPlayerId].position = newPosition >= 100 ? 100 : newPosition;
+      game.diceValue = dice;
       
       // Cek jika menang
       if (newPosition >= 100) {
-        newPosition = 100;
-        alert(`${player.name} menang!`);
-        // Reset game
-        Object.keys(game.players).forEach(id => {
-          game.players[id].position = 1;
-        });
+        setTimeout(() => {
+          alert(`${player.name} menang! Game akan direset.`);
+          // Reset semua pemain
+          Object.keys(game.players).forEach(id => {
+            game.players[id].position = 1;
+          });
+        }, 500);
       } 
       // Cek ular/tangga
       else if (snakesAndLadders[newPosition]) {
-        newPosition = snakesAndLadders[newPosition];
+        game.players[myPlayerId].position = snakesAndLadders[newPosition];
       }
-      
-      // Update posisi
-      game.players[myPlayerId].position = newPosition;
-      game.diceValue = dice;
       
       // Ganti giliran
       const playerIds = Object.keys(game.players);
-      const currentIdx = playerIds.indexOf(game.currentPlayer);
+      const currentIdx = playerIds.indexOf(myPlayerId);
       game.currentPlayer = playerIds[(currentIdx + 1) % playerIds.length];
       
       return game;
@@ -158,22 +156,26 @@ rollBtn.addEventListener('click', () => {
 db.ref(`games/${gameId}`).on('value', (snapshot) => {
   currentGame = snapshot.val();
   
-  if (!currentGame) {
+  if (!currentGame || !currentGame.players) {
     statusElement.textContent = "Game belum dimulai";
     startBtn.disabled = false;
     rollBtn.disabled = true;
     return;
   }
   
-  // Update UI
   updatePlayersUI(currentGame.players);
   updatePlayerPositions(currentGame.players);
   
-  // Update status
-  if (currentGame.currentPlayer === myPlayerId) {
+  // Update status game
+  if (!currentGame.gameStarted) {
+    statusElement.textContent = "Menunggu pemain lain...";
+    rollBtn.disabled = true;
+  } 
+  else if (currentGame.currentPlayer === myPlayerId) {
     statusElement.textContent = "Giliran Anda! Lempar dadu!";
     rollBtn.disabled = false;
-  } else {
+  } 
+  else {
     statusElement.textContent = `Menunggu ${currentGame.players[currentGame.currentPlayer]?.name || 'pemain lain'}...`;
     rollBtn.disabled = true;
   }
