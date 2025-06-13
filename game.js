@@ -8,7 +8,6 @@ const firebaseConfig = {
   messagingSenderId: "17550586022",
   appId: "1:17550586022:web:9d342c6a4f462807224467"
 };
-
 // Inisialisasi Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
@@ -26,6 +25,7 @@ let myPlayerId = generatePlayerId();
 let gameId = "GAME_001"; // ID room yang sama untuk semua pemain
 let currentGame = null;
 let myPlayerName = "";
+let isHost = false;
 
 // Elemen UI
 const board = document.getElementById('board');
@@ -33,14 +33,40 @@ const statusElement = document.getElementById('status');
 const playersElement = document.getElementById('players');
 const startBtn = document.getElementById('startBtn');
 const rollBtn = document.getElementById('rollBtn');
+const usernameModal = document.getElementById('usernameModal');
+const usernameInput = document.getElementById('usernameInput');
+const submitUsername = document.getElementById('submitUsername');
 
-// Inisialisasi Papan
+// Tampilkan modal username saat pertama load
+usernameModal.style.display = 'flex';
+
+// Handle submit username
+submitUsername.addEventListener('click', () => {
+  const username = usernameInput.value.trim();
+  if (username) {
+    myPlayerName = username;
+    usernameModal.style.display = 'none';
+    initializeGame();
+  } else {
+    alert("Username tidak boleh kosong!");
+  }
+});
+
+function initializeGame() {
+  initBoard();
+  setupGameListeners();
+}
+
+function generatePlayerId() {
+  return 'P-' + Math.random().toString(36).substr(2, 9);
+}
+
 function initBoard() {
   board.innerHTML = '';
   
   for (let row = 9; row >= 0; row--) {
     for (let col = 0; col < 10; col++) {
-      const cellNum = (row % 2 === 0) ? (row * 10 + col + 1) : (row * 10 + (9 - col) + 1;
+      const cellNum = (row % 2 === 0) ? (row * 10 + col + 1) : (row * 10 + (9 - col) + 1);
       const cell = document.createElement('div');
       cell.className = 'cell';
       cell.id = `cell-${cellNum}`;
@@ -58,18 +84,111 @@ function initBoard() {
   }
 }
 
-function generatePlayerId() {
-  return 'P-' + Math.random().toString(36).substr(2, 9);
+function setupGameListeners() {
+  // Cek apakah game sudah ada
+  db.ref(`games/${gameId}`).once('value').then(snapshot => {
+    if (!snapshot.exists()) {
+      isHost = true;
+      startBtn.disabled = false;
+      statusElement.textContent = "Anda adalah host. Klik 'Mulai Game' untuk memulai!";
+    } else {
+      joinExistingGame();
+    }
+  });
+
+  // Handle mulai game (hanya untuk host)
+  startBtn.addEventListener('click', () => {
+    if (isHost) {
+      db.ref(`games/${gameId}`).set({
+        players: {
+          [myPlayerId]: createPlayerData()
+        },
+        currentPlayer: myPlayerId,
+        diceValue: 0,
+        gameStarted: false,
+        hostId: myPlayerId
+      });
+    }
+  });
+
+  // Handle lempar dadu
+  rollBtn.addEventListener('click', () => {
+    if (currentGame?.currentPlayer === myPlayerId) {
+      const dice = Math.floor(Math.random() * 6) + 1;
+      rollDice(dice);
+    }
+  });
+
+  // Listen perubahan game state
+  db.ref(`games/${gameId}`).on('value', handleGameUpdate);
+}
+
+function createPlayerData() {
+  return {
+    name: myPlayerName,
+    position: 1,
+    color: colors[Object.keys(currentGame?.players || {}).length % colors.length],
+    isHost: isHost
+  };
+}
+
+function joinExistingGame() {
+  db.ref(`games/${gameId}/players/${myPlayerId}`).set(createPlayerData());
+  statusElement.textContent = "Bergabung ke game...";
+}
+
+function handleGameUpdate(snapshot) {
+  currentGame = snapshot.val();
+  
+  if (!currentGame || !currentGame.players) {
+    statusElement.textContent = "Game belum dimulai";
+    startBtn.disabled = !isHost;
+    rollBtn.disabled = true;
+    return;
+  }
+  
+  // Update UI pemain
+  updatePlayersUI(currentGame.players);
+  updatePlayerPositions(currentGame.players);
+  
+  // Jika pemain ini belum terdaftar, daftarkan
+  if (!currentGame.players[myPlayerId]) {
+    db.ref(`games/${gameId}/players/${myPlayerId}`).set(createPlayerData());
+    return;
+  }
+  
+  // Update status game
+  if (!currentGame.gameStarted) {
+    statusElement.textContent = `Menunggu host memulai... (${Object.keys(currentGame.players).length} pemain)`;
+    rollBtn.disabled = true;
+    startBtn.disabled = !currentGame.players[myPlayerId].isHost;
+  } 
+  else if (currentGame.currentPlayer === myPlayerId) {
+    statusElement.textContent = "Giliran Anda! Lempar dadu!";
+    rollBtn.disabled = false;
+  } 
+  else {
+    statusElement.textContent = `Menunggu ${currentGame.players[currentGame.currentPlayer]?.name || 'pemain lain'}...`;
+    rollBtn.disabled = true;
+  }
+  
+  if (currentGame.diceValue > 0) {
+    statusElement.textContent += ` Dadu: ${currentGame.diceValue}`;
+  }
 }
 
 function updatePlayersUI(players) {
   playersElement.innerHTML = '';
-  Object.entries(players).forEach(([id, player], index) => {
+  Object.entries(players).forEach(([id, player]) => {
     const playerEl = document.createElement('div');
     playerEl.className = 'player-info';
     playerEl.innerHTML = `
       <div class="player-marker" style="background: ${player.color}"></div>
-      <span>${player.name} ${id === myPlayerId ? '(Anda)' : ''} ${id === currentGame?.currentPlayer ? '🎮' : ''}</span>
+      <span>${player.name} 
+        ${id === myPlayerId ? '(Anda)' : ''} 
+        ${id === currentGame?.currentPlayer ? '🎮' : ''}
+        ${player.isHost ? '👑' : ''}
+      </span>
     `;
     playersElement.appendChild(playerEl);
   });
@@ -91,101 +210,63 @@ function updatePlayerPositions(players) {
   });
 }
 
-// Event Listeners
-startBtn.addEventListener('click', async () => {
-  const playerName = prompt('Masukkan nama pemain:', `Player ${Object.keys(currentGame?.players || {}).length + 1}`);
-  
-  if (playerName) {
-    myPlayerName = playerName;
-    const playerCount = currentGame ? Object.keys(currentGame.players).length : 0;
+function rollDice(diceValue) {
+  db.ref(`games/${gameId}`).transaction(game => {
+    if (!game) return null;
     
-    await db.ref(`games/${gameId}/players/${myPlayerId}`).set({
-      name: playerName,
-      position: 1,
-      color: colors[playerCount % colors.length]
-    });
+    const player = game.players[myPlayerId];
+    let newPosition = player.position + diceValue;
+    let isWinner = false;
     
-    // Jika ini pemain pertama, set sebagai currentPlayer
-    if (playerCount === 0) {
-      await db.ref(`games/${gameId}/currentPlayer`).set(myPlayerId);
+    // Cek jika menang
+    if (newPosition >= 100) {
+      newPosition = 100;
+      isWinner = true;
+    } 
+    // Cek ular/tangga
+    else if (snakesAndLadders[newPosition]) {
+      newPosition = snakesAndLadders[newPosition];
     }
     
-    await db.ref(`games/${gameId}/gameStarted`).set(true);
-  }
-});
-
-rollBtn.addEventListener('click', () => {
-  if (currentGame?.currentPlayer === myPlayerId) {
-    const dice = Math.floor(Math.random() * 6) + 1;
-    const player = currentGame.players[myPlayerId];
-    let newPosition = player.position + dice;
+    // Update posisi
+    game.players[myPlayerId].position = newPosition;
+    game.diceValue = diceValue;
     
-    db.ref(`games/${gameId}`).transaction(game => {
-      if (!game) return null;
-      
-      // Update posisi pemain
-      game.players[myPlayerId].position = newPosition >= 100 ? 100 : newPosition;
-      game.diceValue = dice;
-      
-      // Cek jika menang
-      if (newPosition >= 100) {
-        setTimeout(() => {
-          alert(`${player.name} menang! Game akan direset.`);
-          // Reset semua pemain
-          Object.keys(game.players).forEach(id => {
-            game.players[id].position = 1;
-          });
-        }, 500);
-      } 
-      // Cek ular/tangga
-      else if (snakesAndLadders[newPosition]) {
-        game.players[myPlayerId].position = snakesAndLadders[newPosition];
-      }
-      
-      // Ganti giliran
-      const playerIds = Object.keys(game.players);
-      const currentIdx = playerIds.indexOf(myPlayerId);
-      game.currentPlayer = playerIds[(currentIdx + 1) % playerIds.length];
-      
-      return game;
+    // Ganti giliran
+    const playerIds = Object.keys(game.players);
+    const currentIdx = playerIds.indexOf(myPlayerId);
+    game.currentPlayer = playerIds[(currentIdx + 1) % playerIds.length];
+    
+    // Jika game belum mulai, mulai sekarang
+    if (!game.gameStarted) {
+      game.gameStarted = true;
+    }
+    
+    return game;
+  }).then(() => {
+    if (currentGame.players[myPlayerId].position >= 100) {
+      setTimeout(() => {
+        alert(`${myPlayerName} menang! Game akan direset.`);
+        resetGame();
+      }, 500);
+    }
+  });
+}
+
+function resetGame() {
+  db.ref(`games/${gameId}/players`).transaction(players => {
+    if (!players) return null;
+    
+    Object.keys(players).forEach(id => {
+      players[id].position = 1;
     });
-  }
-});
-
-// Listen perubahan game state
-db.ref(`games/${gameId}`).on('value', (snapshot) => {
-  currentGame = snapshot.val();
+    
+    return players;
+  });
   
-  if (!currentGame || !currentGame.players) {
-    statusElement.textContent = "Game belum dimulai";
-    startBtn.disabled = false;
-    rollBtn.disabled = true;
-    return;
-  }
-  
-  updatePlayersUI(currentGame.players);
-  updatePlayerPositions(currentGame.players);
-  
-  // Update status game
-  if (!currentGame.gameStarted) {
-    statusElement.textContent = "Menunggu pemain lain...";
-    rollBtn.disabled = true;
-  } 
-  else if (currentGame.currentPlayer === myPlayerId) {
-    statusElement.textContent = "Giliran Anda! Lempar dadu!";
-    rollBtn.disabled = false;
-  } 
-  else {
-    statusElement.textContent = `Menunggu ${currentGame.players[currentGame.currentPlayer]?.name || 'pemain lain'}...`;
-    rollBtn.disabled = true;
-  }
-  
-  if (currentGame.diceValue > 0) {
-    statusElement.textContent += ` Dadu: ${currentGame.diceValue}`;
-  }
-  
-  startBtn.disabled = !!currentGame.players[myPlayerId];
-});
-
-// Jalankan saat pertama load
-initBoard();
+  db.ref(`games/${gameId}`).update({
+    currentPlayer: myPlayerId,
+    diceValue: 0,
+    gameStarted: true
+  });
+}
