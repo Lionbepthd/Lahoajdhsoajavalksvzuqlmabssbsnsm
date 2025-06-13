@@ -5,216 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ular Tangga Multiplayer</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      margin: 0;
-      padding: 20px;
-      background: #f5f5f5;
-    }
-    
-    #game-container {
-      max-width: 500px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    
-    h1 {
-      color: #2c3e50;
-      text-align: center;
-      margin-top: 0;
-    }
-    
-    #board {
-      display: grid;
-      grid-template-columns: repeat(10, 1fr);
-      gap: 4px;
-      margin: 20px 0;
-    }
-    
-    .cell {
-      aspect-ratio: 1;
-      background: #e3f2fd;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 4px;
-      font-size: 12px;
-      position: relative;
-      font-weight: bold;
-    }
-    
-    .ladder {
-      background: #c8e6c9 !important;
-    }
-    
-    .ladder::after {
-      content: "🪜";
-      position: absolute;
-      font-size: 16px;
-    }
-    
-    .snake {
-      background: #ffcdd2 !important;
-    }
-    
-    .snake::after {
-      content: "🐍";
-      position: absolute;
-      font-size: 16px;
-    }
-    
-    .player {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      position: absolute;
-      font-size: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: bold;
-    }
-    
-    #controls {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin: 20px 0;
-    }
-    
-    button {
-      background: #4285f4;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      font-family: 'Poppins';
-      font-size: 16px;
-      cursor: pointer;
-    }
-    
-    button:disabled {
-      background: #cccccc;
-      cursor: not-allowed;
-    }
-    
-    #status {
-      text-align: center;
-      font-weight: bold;
-      margin: 10px 0;
-      color: #2c3e50;
-    }
-    
-    #players {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      margin-top: 15px;
-    }
-    
-    .player-info {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      background: #f0f0f0;
-      padding: 5px 10px;
-      border-radius: 20px;
-      font-size: 14px;
-    }
-    
-    .player-marker {
-      width: 15px;
-      height: 15px;
-      border-radius: 50%;
-    }
-    
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 100;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .modal-content {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      width: 90%;
-      max-width: 400px;
-    }
-    
-    .modal h2 {
-      margin-top: 0;
-    }
-    
-    .modal input {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      font-family: 'Poppins';
-    }
-    
-    .modal button {
-      width: 100%;
-    }
-    
-    @media (max-width: 500px) {
-      .cell {
-        font-size: 10px;
-      }
-    }
-    /* Add to your existing CSS */
-.separator {
-  text-align: center;
-  margin: 10px 0;
-  color: #777;
-  position: relative;
-}
-
-.separator::before, .separator::after {
-  content: "";
-  flex: 1;
-  border-bottom: 1px solid #ddd;
-  margin: auto 10px;
-}
-
-#roomOptions {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-#roomPlayersList {
-  margin: 15px 0;
-  max-height: 200px;
-  overflow-y: auto;
-}
-
-#copyRoomCodeBtn {
-  background: #6200ea;
-  margin-bottom: 10px;
-}
-
-#startGameBtn {
-  background: #00c853;
-}
-  </style>
+  <link rel="stylesheet" href="styles/style.css">
 </head>
 <body>
+  <!-- Username Modal -->
   <div id="usernameModal" class="modal">
     <div class="modal-content">
       <h2>Masukkan Username</h2>
@@ -222,30 +16,33 @@
       <button id="submitUsername">Mulai Bermain</button>
     </div>
   </div>
-<!-- Add these new modals after the existing username modal -->
-<div id="roomModal" class="modal">
-  <div class="modal-content">
-    <h2>Pilih Room</h2>
-    <div id="roomOptions">
-      <button id="createRoomBtn">Buat Room Baru</button>
-      <div class="separator">ATAU</div>
-      <input type="text" id="roomCodeInput" placeholder="Masukkan kode room">
-      <button id="joinRoomBtn">Gabung Room</button>
+
+  <!-- Room Selection Modal -->
+  <div id="roomModal" class="modal">
+    <div class="modal-content">
+      <h2>Pilih Room</h2>
+      <div id="roomOptions">
+        <button id="createRoomBtn">Buat Room Baru</button>
+        <div class="separator">ATAU</div>
+        <input type="text" id="roomCodeInput" placeholder="Masukkan kode room">
+        <button id="joinRoomBtn">Gabung Room</button>
+      </div>
     </div>
   </div>
-</div>
 
-<div id="roomInfoModal" class="modal">
-  <div class="modal-content">
-    <h2>Room Info</h2>
-    <p>Kode Room: <strong id="roomCodeDisplay"></strong></p>
-    <p>Status: <span id="roomStatusDisplay"></span></p>
-    <div id="roomPlayersList"></div>
-    <button id="copyRoomCodeBtn">Salin Kode Room</button>
-    <button id="startGameBtn" style="display:none;">Mulai Game</button>
+  <!-- Room Info Modal -->
+  <div id="roomInfoModal" class="modal">
+    <div class="modal-content">
+      <h2>Room Info</h2>
+      <p>Kode Room: <strong id="roomCodeDisplay"></strong></p>
+      <p>Status: <span id="roomStatusDisplay"></span></p>
+      <div id="roomPlayersList"></div>
+      <button id="copyRoomCodeBtn">Salin Kode Room</button>
+      <button id="startGameBtn" style="display:none;">Mulai Game</button>
+    </div>
   </div>
-</div>
 
+  <!-- Main Game Container -->
   <div id="game-container">
     <h1>🐍 Ular Tangga Multiplayer 🪜</h1>
     <div id="status">Memuat game...</div>
@@ -257,6 +54,9 @@
     <div id="players"></div>
   </div>
 
-  <script type="module" src="game.js"></script>
+  <!-- Notification Element -->
+  <div id="notification" class="room-notification" style="display:none;"></div>
+
+  <script type="module" src="scripts/game.js"></script>
 </body>
 </html>
