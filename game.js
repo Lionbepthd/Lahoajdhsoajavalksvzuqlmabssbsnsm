@@ -1,3 +1,24 @@
+// Tambahkan di bagian atas game.js
+const snakesAndLadders = {
+  // Tangga (bawah -> atas)
+  4: 14,
+  9: 31, 
+  20: 38,
+  28: 84,
+  40: 59,
+  51: 67,
+  63: 81,
+  
+  // Ular (atas -> bawah)
+  17: 7,
+  54: 34,
+  62: 19,
+  64: 60,
+  87: 24,
+  93: 73,
+  95: 75,
+  99: 78
+};
 // Konfigurasi Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBFYi6jcbd9lN3yAI27GHfEaS3Bl7YR4KU", // Ganti dengan milikmu
@@ -50,20 +71,38 @@ document.getElementById('startBtn').addEventListener('click', () => {
   });
 });
 
-// Lempar Dadu
+// Modifikasi event listener rollBtn
 document.getElementById('rollBtn').addEventListener('click', () => {
   if (currentPlayer === myPlayerId) {
     const dice = Math.floor(Math.random() * 6) + 1;
-    db.ref(`games/${gameId}/diceValue`).set(dice);
+    
+    db.ref(`games/${gameId}`).transaction(game => {
+      if (!game) return game;
+      
+      // Update posisi pemain
+      const player = game.players[myPlayerId];
+      let newPosition = player.position + dice;
+      
+      // Cek jika melebihi 100
+      if (newPosition > 100) newPosition = 100;
+      
+      // Cek ular/tangga
+      if (snakesAndLadders[newPosition]) {
+        newPosition = snakesAndLadders[newPosition];
+      }
+      
+      // Update posisi
+      game.players[myPlayerId].position = newPosition;
+      game.diceValue = dice;
+      
+      // Ganti giliran (sederhana: round-robin)
+      const playerIds = Object.keys(game.players);
+      const currentIdx = playerIds.indexOf(game.currentPlayer);
+      game.currentPlayer = playerIds[(currentIdx + 1) % playerIds.length];
+      
+      return game;
+    });
   }
-});
-
-// Listen Perubahan Game State
-db.ref(`games/${gameId}`).on('value', (snapshot) => {
-  const game = snapshot.val();
-  if (!game) return;
-  
-  updateBoard(game);
 });
 
 // Update Papan
