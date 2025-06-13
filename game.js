@@ -1,16 +1,21 @@
-// Konfigurasi Firebase - Ganti dengan config Anda
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
+import { getDatabase, ref, set, onValue, update, runTransaction } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
+
+// Konfigurasi Firebase - Ganti dengan milik Anda
 const firebaseConfig = {
   apiKey: "AIzaSyBFYi6jcbd9lN3yAI27GHfEaS3Bl7YR4KU",
   authDomain: "ulartangga-49686.firebaseapp.com",
   databaseURL: "https://ulartangga-49686-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "ulartangga-49686",
-  storageBucket: "ulartangga-49686.firebasestorage.app",
+  storageBucket: "ulartangga-49686.appspot.com",
   messagingSenderId: "17550586022",
-  appId: "1:17550586022:web:9d342c6a4f462807224467"
+  appId: "1:17550586022:web:9d342c6a4f462807224467",
+  measurementId: "G-XHZBBQ8QX1"
 };
+
 // Inisialisasi Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
 // Konfigurasi Game
 const snakesAndLadders = {
@@ -22,7 +27,7 @@ const snakesAndLadders = {
 
 const colors = ['#FF5252', '#4CAF50', '#2196F3', '#FFC107'];
 let myPlayerId = generatePlayerId();
-let gameId = "GAME_001"; // ID room yang sama untuk semua pemain
+let gameId = "MAIN_ROOM"; // ID room yang sama untuk semua pemain
 let currentGame = null;
 let myPlayerName = "";
 let isHost = false;
@@ -40,30 +45,74 @@ const submitUsername = document.getElementById('submitUsername');
 // Tampilkan modal username saat pertama load
 usernameModal.style.display = 'flex';
 
-// Handle submit username
-submitUsername.addEventListener('click', () => {
+// Fungsi pembantu
+function generatePlayerId() {
+  return 'P-' + Math.random().toString(36).substr(2, 9);
+}
+
+function getNextColor() {
+  return colors[Object.keys(currentGame?.players || {}).length % colors.length];
+}
+
+// Event Listeners
+submitUsername.addEventListener('click', handleUsernameSubmit);
+startBtn.addEventListener('click', handleStartGame);
+rollBtn.addEventListener('click', handleRollDice);
+
+async function handleUsernameSubmit() {
   const username = usernameInput.value.trim();
   if (username) {
     myPlayerName = username;
     usernameModal.style.display = 'none';
-    initializeGame();
+    await checkGameExists();
   } else {
-    alert("Username tidak boleh kosong!");
+    alert("Harap masukkan username!");
   }
-});
-
-function initializeGame() {
-  initBoard();
-  setupGameListeners();
 }
 
-function generatePlayerId() {
-  return 'P-' + Math.random().toString(36).substr(2, 9);
+async function checkGameExists() {
+  const gameRef = ref(db, `games/${gameId}`);
+  
+  try {
+    onValue(gameRef, (snapshot) => {
+      if (!snapshot.exists()) {
+        isHost = true;
+        startBtn.disabled = false;
+        statusElement.textContent = "Anda adalah host. Klik 'Mulai Game'!";
+        initBoard();
+      } else {
+        joinGame();
+      }
+    }, { onlyOnce: true });
+  } catch (error) {
+    console.error("Error checking game:", error);
+    statusElement.textContent = "Error menghubungkan ke server";
+  }
+}
+
+async function joinGame() {
+  const playerRef = ref(db, `games/${gameId}/players/${myPlayerId}`);
+  const playerData = {
+    name: myPlayerName,
+    position: 1,
+    color: getNextColor(),
+    isHost: false
+  };
+
+  try {
+    await set(playerRef, playerData);
+    initBoard();
+    setupGameListener();
+  } catch (error) {
+    console.error("Error joining game:", error);
+    alert("Gagal bergabung ke game");
+  }
 }
 
 function initBoard() {
   board.innerHTML = '';
   
+  // Buat papan 10x10 (100 kotak)
   for (let row = 9; row >= 0; row--) {
     for (let col = 0; col < 10; col++) {
       const cellNum = (row % 2 === 0) ? (row * 10 + col + 1) : (row * 10 + (9 - col) + 1);
@@ -72,6 +121,7 @@ function initBoard() {
       cell.id = `cell-${cellNum}`;
       cell.textContent = cellNum;
       
+      // Tandai ular dan tangga
       if (snakesAndLadders[cellNum]) {
         cell.classList.add(
           snakesAndLadders[cellNum] > cellNum ? 'ladder' : 'snake'
@@ -84,84 +134,24 @@ function initBoard() {
   }
 }
 
-function setupGameListeners() {
-  // Cek apakah game sudah ada
-  db.ref(`games/${gameId}`).once('value').then(snapshot => {
-    if (!snapshot.exists()) {
-      isHost = true;
-      startBtn.disabled = false;
-      statusElement.textContent = "Anda adalah host. Klik 'Mulai Game' untuk memulai!";
-    } else {
-      joinExistingGame();
-    }
+function setupGameListener() {
+  const gameRef = ref(db, `games/${gameId}`);
+  
+  onValue(gameRef, (snapshot) => {
+    currentGame = snapshot.val();
+    if (!currentGame) return;
+    
+    updateGameUI();
+    updatePlayersUI();
+    updatePlayerPositions();
   });
-
-  // Handle mulai game (hanya untuk host)
-  startBtn.addEventListener('click', () => {
-    if (isHost) {
-      db.ref(`games/${gameId}`).set({
-        players: {
-          [myPlayerId]: createPlayerData()
-        },
-        currentPlayer: myPlayerId,
-        diceValue: 0,
-        gameStarted: false,
-        hostId: myPlayerId
-      });
-    }
-  });
-
-  // Handle lempar dadu
-  rollBtn.addEventListener('click', () => {
-    if (currentGame?.currentPlayer === myPlayerId) {
-      const dice = Math.floor(Math.random() * 6) + 1;
-      rollDice(dice);
-    }
-  });
-
-  // Listen perubahan game state
-  db.ref(`games/${gameId}`).on('value', handleGameUpdate);
 }
 
-function createPlayerData() {
-  return {
-    name: myPlayerName,
-    position: 1,
-    color: colors[Object.keys(currentGame?.players || {}).length % colors.length],
-    isHost: isHost
-  };
-}
-
-function joinExistingGame() {
-  db.ref(`games/${gameId}/players/${myPlayerId}`).set(createPlayerData());
-  statusElement.textContent = "Bergabung ke game...";
-}
-
-function handleGameUpdate(snapshot) {
-  currentGame = snapshot.val();
-  
-  if (!currentGame || !currentGame.players) {
-    statusElement.textContent = "Game belum dimulai";
-    startBtn.disabled = !isHost;
-    rollBtn.disabled = true;
-    return;
-  }
-  
-  // Update UI pemain
-  updatePlayersUI(currentGame.players);
-  updatePlayerPositions(currentGame.players);
-  
-  // Jika pemain ini belum terdaftar, daftarkan
-  if (!currentGame.players[myPlayerId]) {
-    db.ref(`games/${gameId}/players/${myPlayerId}`).set(createPlayerData());
-    return;
-  }
-  
-  // Update status game
+function updateGameUI() {
   if (!currentGame.gameStarted) {
     statusElement.textContent = `Menunggu host memulai... (${Object.keys(currentGame.players).length} pemain)`;
     rollBtn.disabled = true;
-    startBtn.disabled = !currentGame.players[myPlayerId].isHost;
+    startBtn.disabled = !isHost;
   } 
   else if (currentGame.currentPlayer === myPlayerId) {
     statusElement.textContent = "Giliran Anda! Lempar dadu!";
@@ -177,16 +167,16 @@ function handleGameUpdate(snapshot) {
   }
 }
 
-function updatePlayersUI(players) {
+function updatePlayersUI() {
   playersElement.innerHTML = '';
-  Object.entries(players).forEach(([id, player]) => {
+  Object.entries(currentGame.players).forEach(([id, player]) => {
     const playerEl = document.createElement('div');
     playerEl.className = 'player-info';
     playerEl.innerHTML = `
       <div class="player-marker" style="background: ${player.color}"></div>
       <span>${player.name} 
         ${id === myPlayerId ? '(Anda)' : ''} 
-        ${id === currentGame?.currentPlayer ? '🎮' : ''}
+        ${id === currentGame.currentPlayer ? '🎮' : ''}
         ${player.isHost ? '👑' : ''}
       </span>
     `;
@@ -194,10 +184,10 @@ function updatePlayersUI(players) {
   });
 }
 
-function updatePlayerPositions(players) {
+function updatePlayerPositions() {
   document.querySelectorAll('.player').forEach(el => el.remove());
   
-  Object.entries(players).forEach(([id, player]) => {
+  Object.entries(currentGame.players).forEach(([id, player]) => {
     const cell = document.getElementById(`cell-${player.position}`);
     if (cell) {
       const playerEl = document.createElement('div');
@@ -210,63 +200,101 @@ function updatePlayerPositions(players) {
   });
 }
 
-function rollDice(diceValue) {
-  db.ref(`games/${gameId}`).transaction(game => {
-    if (!game) return null;
+async function handleStartGame() {
+  if (!isHost) return;
+
+  const gameRef = ref(db, `games/${gameId}`);
+  const playerRef = ref(db, `games/${gameId}/players/${myPlayerId}`);
+  
+  try {
+    await set(playerRef, {
+      name: myPlayerName,
+      position: 1,
+      color: getNextColor(),
+      isHost: true
+    });
     
-    const player = game.players[myPlayerId];
-    let newPosition = player.position + diceValue;
-    let isWinner = false;
-    
+    await update(gameRef, {
+      currentPlayer: myPlayerId,
+      diceValue: 0,
+      gameStarted: true,
+      hostId: myPlayerId
+    });
+  } catch (error) {
+    console.error("Error starting game:", error);
+    alert("Gagal memulai game");
+  }
+}
+
+async function handleRollDice() {
+  if (currentGame?.currentPlayer !== myPlayerId) return;
+
+  const dice = Math.floor(Math.random() * 6) + 1;
+  const gameRef = ref(db, `games/${gameId}`);
+  
+  try {
+    await runTransaction(gameRef, (game) => {
+      if (!game) return null;
+      
+      const player = game.players[myPlayerId];
+      let newPosition = player.position + dice;
+      let isWinner = false;
+      
+      // Cek jika menang
+      if (newPosition >= 100) {
+        newPosition = 100;
+        isWinner = true;
+      } 
+      // Cek ular/tangga
+      else if (snakesAndLadders[newPosition]) {
+        newPosition = snakesAndLadders[newPosition];
+      }
+      
+      // Update posisi
+      game.players[myPlayerId].position = newPosition;
+      game.diceValue = dice;
+      
+      // Ganti giliran
+      const playerIds = Object.keys(game.players);
+      const currentIdx = playerIds.indexOf(myPlayerId);
+      game.currentPlayer = playerIds[(currentIdx + 1) % playerIds.length];
+      
+      return game;
+    });
+
     // Cek jika menang
-    if (newPosition >= 100) {
-      newPosition = 100;
-      isWinner = true;
-    } 
-    // Cek ular/tangga
-    else if (snakesAndLadders[newPosition]) {
-      newPosition = snakesAndLadders[newPosition];
-    }
-    
-    // Update posisi
-    game.players[myPlayerId].position = newPosition;
-    game.diceValue = diceValue;
-    
-    // Ganti giliran
-    const playerIds = Object.keys(game.players);
-    const currentIdx = playerIds.indexOf(myPlayerId);
-    game.currentPlayer = playerIds[(currentIdx + 1) % playerIds.length];
-    
-    // Jika game belum mulai, mulai sekarang
-    if (!game.gameStarted) {
-      game.gameStarted = true;
-    }
-    
-    return game;
-  }).then(() => {
     if (currentGame.players[myPlayerId].position >= 100) {
       setTimeout(() => {
         alert(`${myPlayerName} menang! Game akan direset.`);
         resetGame();
       }, 500);
     }
-  });
+  } catch (error) {
+    console.error("Error rolling dice:", error);
+    alert("Gagal melempar dadu");
+  }
 }
 
-function resetGame() {
-  db.ref(`games/${gameId}/players`).transaction(players => {
-    if (!players) return null;
-    
-    Object.keys(players).forEach(id => {
-      players[id].position = 1;
+async function resetGame() {
+  const playersRef = ref(db, `games/${gameId}/players`);
+  
+  try {
+    await runTransaction(playersRef, (players) => {
+      if (!players) return null;
+      
+      Object.keys(players).forEach(id => {
+        players[id].position = 1;
+      });
+      
+      return players;
     });
     
-    return players;
-  });
-  
-  db.ref(`games/${gameId}`).update({
-    currentPlayer: myPlayerId,
-    diceValue: 0,
-    gameStarted: true
-  });
+    await update(ref(db, `games/${gameId}`), {
+      currentPlayer: myPlayerId,
+      diceValue: 0
+    });
+  } catch (error) {
+    console.error("Error resetting game:", error);
+    alert("Gagal mereset game");
+  }
 }
