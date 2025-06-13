@@ -1,0 +1,268 @@
+/* BASE STYLES */
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 20px;
+  background: #f5f5f5;
+}
+
+#game-container {
+  max-width: 500px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+h1 {
+  color: #2c3e50;
+  text-align: center;
+  margin-top: 0;
+}
+
+/* BOARD STYLES */
+#board {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 4px;
+  margin: 20px 0;
+}
+
+.cell {
+  aspect-ratio: 1;
+  background: #e3f2fd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  font-size: 12px;
+  position: relative;
+  font-weight: bold;
+}
+
+.ladder {
+  background: #c8e6c9 !important;
+}
+
+.ladder::after {
+  content: "🪜";
+  position: absolute;
+  font-size: 16px;
+}
+
+.snake {
+  background: #ffcdd2 !important;
+}
+
+.snake::after {
+  content: "🐍";
+  position: absolute;
+  font-size: 16px;
+}
+
+.player {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  position: absolute;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+}
+
+/* CONTROLS */
+#controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+button {
+  background: #4285f4;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-family: 'Poppins';
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background: #3367d6;
+}
+
+button:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+}
+
+/* PLAYER INFO */
+#status {
+  text-align: center;
+  font-weight: bold;
+  margin: 10px 0;
+  color: #2c3e50;
+}
+
+#players {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.player-info {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: #f0f0f0;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+}
+
+.player-marker {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+}
+
+/* MODAL STYLES */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 100;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  animation: modalFadeIn 0.3s;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modal h2 {
+  margin-top: 0;
+  color: #2c3e50;
+}
+
+.modal input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-family: 'Poppins';
+}
+
+/* ROOM SYSTEM STYLES */
+.separator {
+  text-align: center;
+  margin: 10px 0;
+  color: #777;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.separator::before,
+.separator::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #ddd;
+  margin: 0 10px;
+}
+
+#roomOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#roomPlayersList {
+  margin: 15px 0;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 10px;
+  background: #f9f9f9;
+  border-radius: 5px;
+}
+
+#roomPlayersList .player-info {
+  margin-bottom: 5px;
+}
+
+#copyRoomCodeBtn {
+  background: #6200ea;
+  margin-bottom: 10px;
+}
+
+#copyRoomCodeBtn:hover {
+  background: #4a00c0;
+}
+
+#startGameBtn {
+  background: #00c853;
+}
+
+#startGameBtn:hover {
+  background: #00a844;
+}
+
+/* NOTIFICATION STYLES */
+.room-notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  animation: fadeIn 0.3s ease-in-out;
+  z-index: 1000;
+  display: none;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; top: 10px; }
+  to { opacity: 1; top: 20px; }
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 500px) {
+  .cell {
+    font-size: 10px;
+  }
+  
+  h1 {
+    font-size: 24px;
+  }
+  
+  button {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+}
