@@ -1,7 +1,7 @@
 // Konfigurasi Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyB...", // Ganti dengan milikmu
-  databaseURL: "https://ular-tangga-default-rtdb.asia-southeast1.firebasedatabase.app"
+  apiKey: "AIzaSyBFYi6jcbd9lN3yAI27GHfEaS3Bl7YR4KU", // Ganti dengan milikmu
+  databaseURL: "https://ulartangga-49686-default-rtdb.asia-southeast1.firebasedatabase.app"
 };
 
 // Inisialisasi Firebase
