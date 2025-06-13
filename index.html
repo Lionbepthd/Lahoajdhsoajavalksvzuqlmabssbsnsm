@@ -53,6 +53,31 @@
       cursor: pointer;
     }
   </style>
+  <style>
+  /* ... (style sebelumnya) ... */
+  
+  .cell.ladder {
+    background: #a5d6a7;
+    position: relative;
+  }
+  
+  .cell.ladder::after {
+    content: "🪜";
+    position: absolute;
+    font-size: 16px;
+  }
+  
+  .cell.snake {
+    background: #ef9a9a;
+    position: relative;
+  }
+  
+  .cell.snake::after {
+    content: "🐍";
+    position: absolute;
+    font-size: 16px;
+  }
+  </style>
 </head>
 <body>
   <div id="game">
