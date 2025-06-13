@@ -13,9 +13,22 @@ const firebaseConfig = {
   measurementId: "G-XHZBBQ8QX1"
 };
 
-// Inisialisasi Firebase
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+// Inisialisasi Firebase dengan error handling
+let db;
+try {
+  const app = initializeApp(firebaseConfig);
+  db = getDatabase(app);
+  console.log("🔥 Firebase berhasil diinisialisasi!");
+  
+  // Test koneksi ke database
+  const testRef = ref(db, 'connection_test');
+  set(testRef, { status: "connected", timestamp: Date.now() })
+    .then(() => console.log("✅ Test koneksi database berhasil!"))
+    .catch(error => console.error("❌ Gagal konek ke database:", error));
+} catch (error) {
+  console.error("🔥 Error inisialisasi Firebase:", error);
+  alert("Gagal menginisialisasi Firebase. Cek console untuk detail.");
+}
 
 // Konfigurasi Game
 const snakesAndLadders = {
@@ -27,7 +40,7 @@ const snakesAndLadders = {
 
 const colors = ['#FF5252', '#4CAF50', '#2196F3', '#FFC107'];
 let myPlayerId = generatePlayerId();
-let gameId = "MAIN_ROOM"; // ID room yang sama untuk semua pemain
+let gameId = "MAIN_ROOM_V3"; // ID room yang sama untuk semua pemain
 let currentGame = null;
 let myPlayerName = "";
 let isHost = false;
@@ -71,6 +84,11 @@ async function handleUsernameSubmit() {
 }
 
 async function checkGameExists() {
+  if (!db) {
+    alert("Database tidak terhubung. Coba refresh halaman.");
+    return;
+  }
+
   const gameRef = ref(db, `games/${gameId}`);
   
   try {
@@ -91,21 +109,25 @@ async function checkGameExists() {
 }
 
 async function joinGame() {
+  if (!db) return;
+
   const playerRef = ref(db, `games/${gameId}/players/${myPlayerId}`);
   const playerData = {
     name: myPlayerName,
     position: 1,
     color: getNextColor(),
-    isHost: false
+    isHost: false,
+    joinedAt: Date.now()
   };
 
   try {
     await set(playerRef, playerData);
+    console.log(`🎮 Pemain ${myPlayerName} bergabung ke game ${gameId}`);
     initBoard();
     setupGameListener();
   } catch (error) {
     console.error("Error joining game:", error);
-    alert("Gagal bergabung ke game");
+    alert("Gagal bergabung ke game. Coba lagi.");
   }
 }
 
@@ -135,11 +157,16 @@ function initBoard() {
 }
 
 function setupGameListener() {
+  if (!db) return;
+
   const gameRef = ref(db, `games/${gameId}`);
   
   onValue(gameRef, (snapshot) => {
     currentGame = snapshot.val();
-    if (!currentGame) return;
+    if (!currentGame) {
+      console.log("Game tidak ditemukan. Membuat baru...");
+      return;
+    }
     
     updateGameUI();
     updatePlayersUI();
@@ -201,7 +228,7 @@ function updatePlayerPositions() {
 }
 
 async function handleStartGame() {
-  if (!isHost) return;
+  if (!isHost || !db) return;
 
   const gameRef = ref(db, `games/${gameId}`);
   const playerRef = ref(db, `games/${gameId}/players/${myPlayerId}`);
@@ -211,23 +238,27 @@ async function handleStartGame() {
       name: myPlayerName,
       position: 1,
       color: getNextColor(),
-      isHost: true
+      isHost: true,
+      joinedAt: Date.now()
     });
     
     await update(gameRef, {
       currentPlayer: myPlayerId,
       diceValue: 0,
       gameStarted: true,
-      hostId: myPlayerId
+      hostId: myPlayerId,
+      startedAt: Date.now()
     });
+    
+    console.log("🚀 Game dimulai oleh host!");
   } catch (error) {
     console.error("Error starting game:", error);
-    alert("Gagal memulai game");
+    alert("Gagal memulai game. Coba lagi.");
   }
 }
 
 async function handleRollDice() {
-  if (currentGame?.currentPlayer !== myPlayerId) return;
+  if (!db || currentGame?.currentPlayer !== myPlayerId) return;
 
   const dice = Math.floor(Math.random() * 6) + 1;
   const gameRef = ref(db, `games/${gameId}`);
@@ -247,7 +278,7 @@ async function handleRollDice() {
       } 
       // Cek ular/tangga
       else if (snakesAndLadders[newPosition]) {
-        newPosition = snakesAndLadders[newPosition];
+        newPosition = snakesAndladders[newPosition];
       }
       
       // Update posisi
@@ -271,11 +302,13 @@ async function handleRollDice() {
     }
   } catch (error) {
     console.error("Error rolling dice:", error);
-    alert("Gagal melempar dadu");
+    alert("Gagal melempar dadu. Coba lagi.");
   }
 }
 
 async function resetGame() {
+  if (!db) return;
+
   const playersRef = ref(db, `games/${gameId}/players`);
   
   try {
@@ -291,10 +324,13 @@ async function resetGame() {
     
     await update(ref(db, `games/${gameId}`), {
       currentPlayer: myPlayerId,
-      diceValue: 0
+      diceValue: 0,
+      lastReset: Date.now()
     });
+    
+    console.log("🔄 Game direset!");
   } catch (error) {
     console.error("Error resetting game:", error);
-    alert("Gagal mereset game");
+    alert("Gagal mereset game. Coba lagi.");
   }
 }
