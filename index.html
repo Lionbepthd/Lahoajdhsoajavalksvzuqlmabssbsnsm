@@ -1,91 +1,155 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ular Tangga Firebase</title>
+  <title>Ular Tangga Multiplayer</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Poppins', sans-serif;
-      text-align: center;
-      background: #f0f2f5;
+      margin: 0;
       padding: 20px;
+      background: #f5f5f5;
     }
-    #game {
+    
+    #game-container {
       max-width: 500px;
       margin: 0 auto;
       background: white;
-      padding: 20px;
       border-radius: 10px;
+      padding: 20px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
+    
+    h1 {
+      color: #2c3e50;
+      text-align: center;
+      margin-top: 0;
+    }
+    
     #board {
       display: grid;
       grid-template-columns: repeat(10, 1fr);
-      gap: 5px;
+      gap: 4px;
       margin: 20px 0;
     }
+    
     .cell {
       aspect-ratio: 1;
       background: #e3f2fd;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 5px;
+      border-radius: 4px;
       font-size: 12px;
       position: relative;
+      font-weight: bold;
     }
+    
+    .ladder {
+      background: #c8e6c9 !important;
+    }
+    
+    .ladder::after {
+      content: "🪜";
+      position: absolute;
+      font-size: 16px;
+    }
+    
+    .snake {
+      background: #ffcdd2 !important;
+    }
+    
+    .snake::after {
+      content: "🐍";
+      position: absolute;
+      font-size: 16px;
+    }
+    
     .player {
       width: 20px;
       height: 20px;
       border-radius: 50%;
       position: absolute;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
       font-weight: bold;
     }
+    
+    #controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
+    }
+    
     button {
       background: #4285f4;
       color: white;
       border: none;
       padding: 10px 20px;
       border-radius: 5px;
-      margin: 5px;
+      font-family: 'Poppins';
+      font-size: 16px;
       cursor: pointer;
     }
-  </style>
-  <style>
-  /* ... (style sebelumnya) ... */
-  
-  .cell.ladder {
-    background: #a5d6a7;
-    position: relative;
-  }
-  
-  .cell.ladder::after {
-    content: "🪜";
-    position: absolute;
-    font-size: 16px;
-  }
-  
-  .cell.snake {
-    background: #ef9a9a;
-    position: relative;
-  }
-  
-  .cell.snake::after {
-    content: "🐍";
-    position: absolute;
-    font-size: 16px;
-  }
+    
+    button:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+    }
+    
+    #status {
+      text-align: center;
+      font-weight: bold;
+      margin: 10px 0;
+      color: #2c3e50;
+    }
+    
+    #players {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 15px;
+    }
+    
+    .player-info {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: #f0f0f0;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 14px;
+    }
+    
+    .player-marker {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+    }
+    
+    @media (max-width: 500px) {
+      .cell {
+        font-size: 10px;
+      }
+    }
   </style>
 </head>
 <body>
-  <div id="game">
-    <h1>🐍 Ular Tangga (Firebase) 🪜</h1>
+  <div id="game-container">
+    <h1>🐍 Ular Tangga Multiplayer 🪜</h1>
     <div id="status">Menunggu pemain...</div>
     <div id="board"></div>
-    <button id="startBtn">Mulai Game</button>
-    <button id="rollBtn" disabled>Lempar Dadu</button>
+    <div id="controls">
+      <button id="startBtn">Mulai Game</button>
+      <button id="rollBtn" disabled>Lempar Dadu</button>
+    </div>
     <div id="players"></div>
   </div>
 
