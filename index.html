@@ -177,6 +177,41 @@
         font-size: 10px;
       }
     }
+    /* Add to your existing CSS */
+.separator {
+  text-align: center;
+  margin: 10px 0;
+  color: #777;
+  position: relative;
+}
+
+.separator::before, .separator::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #ddd;
+  margin: auto 10px;
+}
+
+#roomOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#roomPlayersList {
+  margin: 15px 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+#copyRoomCodeBtn {
+  background: #6200ea;
+  margin-bottom: 10px;
+}
+
+#startGameBtn {
+  background: #00c853;
+}
   </style>
 </head>
 <body>
