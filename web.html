@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Game Custom Lion</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      background: black;
+      color: white;
+      overflow-x: hidden;
+    }
+    header {
+      background: rgba(0,0,0,0.7);
+      padding: 20px;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+    h1 { margin: 0; font-size: 2em; }
+    .container {
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+      position: relative;
+      z-index: 2;
+    }
+    .features { margin: 20px 0; }
+    ul { padding-left: 20px; }
+    .buttons a {
+      display: inline-block;
+      background: #28a745;
+      color: white;
+      padding: 10px 20px;
+      margin: 10px 5px;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+    .buttons a:hover { background: #218838; }
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: rgba(0,0,0,0.7);
+      color: #aaa;
+      position: relative;
+      z-index: 2;
+    }
+    .stars {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: url('https://www.transparenttextures.com/patterns/stardust.png');
+      animation: moveStars 100s linear infinite;
+      z-index: 0;
+    }
+    @keyframes moveStars {
+      from { background-position: 0 0; }
+      to { background-position: 10000px 5000px; }
+    }
+    
+    /* Menu Hamburger */
+    .menu-btn {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      cursor: pointer;
+      z-index: 10;
+      font-size: 24px;
+      color: white;
+      background: rgba(0,0,0,0.5);
+      padding: 5px 10px;
+      border-radius: 5px;
+      transition: all 0.3s;
+    }
+    .menu-btn:hover {
+      background: rgba(0,0,0,0.8);
+    }
+    
+    /* Side Menu */
+    .side-menu {
+      height: 100%;
+      width: 0;
+      position: fixed;
+      z-index: 11;
+      top: 0;
+      left: 0;
+      background-color: rgba(0,0,0,0.9);
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 60px;
+      backdrop-filter: blur(5px);
+    }
+    
+    .side-menu a {
+      padding: 15px 25px;
+      text-decoration: none;
+      font-size: 18px;
+      color: #aaa;
+      display: block;
+      transition: 0.3s;
+      border-left: 3px solid transparent;
+    }
+    
+    .side-menu a:hover {
+      color: #28a745;
+      background-color: rgba(40, 167, 69, 0.1);
+      border-left: 3px solid #28a745;
+    }
+    
+    .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 25px;
+      font-size: 30px;
+      color: #aaa;
+      cursor: pointer;
+    }
+    
+    .close-btn:hover {
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+<div class="stars"></div>
+
+<!-- Hamburger Menu Button -->
+<div class="menu-btn" onclick="openNav()">☰</div>
+
+<!-- Side Menu -->
+<div id="sideMenu" class="side-menu">
+  <a href="javascript:void(0)" class="close-btn" onclick="closeNav()">&times;</a>
+  <a href="https://lionbepthd.github.io/GAMECUS/pojav.html" target="_blank">Control Pojav by LIONBEPTHD</a>
+  <a href="https://youtube.com/@lionbepthd" target="_blank">YouTube Channel</a>
+  <a href="https://www.tiktok.com/@lionbepthd0" target="_blank">Tiktok Saya</a>
+  <a href="mailto:lionbepthd62@gmail.com">Hubungi Saya</a>
+</div>
+
+<header>
+  <h1>Game Buatan Lionbepthd</h1>
+  <p>Kumpulan Game simple dalam Satu Apk</p>
+</header>
+
+<div class="container">
+  <h2>Deskripsi</h2>
+  <p>Lionbepthd adalah game buatan anak bangsa yang menyatukan beberapa permainan klasik dalam satu aplikasi ringan dan seru. Cocok dimainkan untuk semua umur langsung dari browser atau sebagai aplikasi Android!</p>
+
+  <h2>Fitur Unggulan</h2>
+  <div class="features">
+    <ul>
+      <li>Game Ular Tangga dengan soal kuis sejarah</li>
+      <li>Pac-Man klasik dengan peta pilihan</li>
+      <li>Game catur dengan skor tersimpan</li>
+      <li>Tampilan sederhana dan kontrol mudah</li>
+      <li>Dan Game Online Lain nya</li>
+    </ul>
+  </div>
+
+  <div class="buttons">
+    <a href="https://github.com/Lionbepthd/GAMECUS/releases/latest" target="_blank">Unduh via GitHub</a>
+  </div>
+</div>
+
+<footer>
+  &copy; 2025 Lionbepthd. Semua hak cipta dilindungi.
+</footer>
+
+<script>
+  function openNav() {
+    document.getElementById("sideMenu").style.width = "250px";
+  }
+  
+  function closeNav() {
+    document.getElementById("sideMenu").style.width = "0";
+  }
+  
+  // Close menu when clicking outside
+  window.addEventListener('click', function(event) {
+    const sideMenu = document.getElementById('sideMenu');
+    const menuBtn = document.querySelector('.menu-btn');
+    
+    if (event.target !== menuBtn && !menuBtn.contains(event.target) && 
+        event.target !== sideMenu && !sideMenu.contains(event.target)) {
+      closeNav();
+    }
+  });
+</script>
+
+</body>
+</html>
