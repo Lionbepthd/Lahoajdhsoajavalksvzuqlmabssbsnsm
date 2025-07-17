@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Pojav Launcher Host</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+            background-color: #f5f5f5;
+            background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-top: 40px;
+        }
+        .control-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .control-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            width: 300px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .control-card:hover {
+            transform: translateY(-5px);
+        }
+        .download-btn {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        .download-btn:hover {
+            background-color: #2980b9;
+        }
+        .file-info {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        
+        /* Menu Hamburger */
+        .menu-btn {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            cursor: pointer;
+            z-index: 10;
+            font-size: 24px;
+            color: #2c3e50;
+        }
+        
+        /* Sidebar Menu */
+        .side-menu {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 11;
+            top: 0;
+            left: 0;
+            background-color: #2c3e50;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+        }
+        
+        .side-menu a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #ecf0f1;
+            display: block;
+            transition: 0.3s;
+        }
+        
+        .side-menu a:hover {
+            color: #3498db;
+            background-color: #34495e;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 25px;
+            font-size: 30px;
+            color: #ecf0f1;
+            cursor: pointer;
+        }
+        
+        /* Footer */
+        footer {
+            margin-top: 40px;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hamburger Menu Button -->
+    <div class="menu-btn" onclick="openNav()">☰</div>
+    
+    <!-- Side Menu -->
+    <div id="sideMenu" class="side-menu">
+        <a href="javascript:void(0)" class="close-btn" onclick="closeNav()">&times;</a>
+        <a href="https://lionbepthd.github.io/GAMECUS/web" target="_blank">Website Utama</a>
+        <a href="https://youtube.com/@lionbepthd" target="_blank">YouTube Channel</a>
+        <a href="https://www.tiktok.com/@lionbepthd0" target="_blank">Tiktok Saya</a>
+        <a href="mailto:lionbepthd62@gmail.com">Hubungi Saya</a>
+    </div>
+
+    <h1>Control Pojav Launcher</h1>
+    <p>Download file kontrol untuk Pojav Launcher</p>
+    
+    <div class="control-container">
+        <div class="control-card">
+            <h2>Control Survival By Lionbepthd</h2>
+            <p>Kontrol khusus untuk mode Survival dengan layout ergonomis</p>
+            <a href="https://www.mediafire.com/file/yk0iy6mbqnle43j/Survival.zip/file" class="download-btn" download>Download Control 1</a>
+            <div class="file-info">Format: ZIP | Ukuran: 3.38KB</div>
+        </div>
+        
+        <div class="control-card">
+            <h2>Control Pafish By Lionbepthd</h2>
+            <p>Kontrol untuk gameplay Mancing dengan sensitivitas tinggi</p>
+            <a href="https://www.mediafire.com/file/9xgej11bhldlpwq/Pafish.zip/file" class="download-btn" download>Download Control 2</a>
+            <div class="file-info">Format: ZIP | Ukuran: 3.20KB</div>
+        </div>
+    </div>
+    
+    <div style="margin-top: 40px; padding: 20px; background: white; border-radius: 10px;">
+        <h3>Cara Install:</h3>
+        <ol style="text-align: left; max-width: 500px; margin: 10px auto;">
+            <li>Download file control yang diinginkan</li>
+            <li>Ekstrak file ZIP</li>
+            <li>Salin file ke folder controls Pojav Launcher</li>
+            <li>Buka Pojav Launcher dan pilih control yang baru</li>
+        </ol>
+    </div>
+    
+    <footer>
+        &copy; 2025 Lionbepthd. All rights reserved.
+    </footer>
+    
+    <script>
+        function openNav() {
+            document.getElementById("sideMenu").style.width = "250px";
+        }
+        
+        function closeNav() {
+            document.getElementById("sideMenu").style.width = "0";
+        }
+        
+        // Close menu when clicking outside
+        window.addEventListener('click', function(event) {
+            const sideMenu = document.getElementById('sideMenu');
+            const menuBtn = document.querySelector('.menu-btn');
+            
+            if (event.target !== menuBtn && !menuBtn.contains(event.target) && 
+                event.target !== sideMenu && !sideMenu.contains(event.target)) {
+                closeNav();
+            }
+        });
+    </script>
+</body>
+</html>
