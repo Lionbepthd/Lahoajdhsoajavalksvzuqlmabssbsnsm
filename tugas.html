@@ -1,126 +1,160 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Daftar Tugas Pelajar (Firebase)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
     <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --text-color: #333;
+            --light-gray: #f0f2f5;
+            --medium-gray: #e0e0e0;
+            --dark-gray: #666;
+            --white: #ffffff;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
         body {
             font-family: 'Poppins', sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #f0f2f5;
-            color: #333;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            line-height: 1.6;
         }
         .container {
-            max-width: 900px;
+            max-width: 100%;
             margin: 0 auto;
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background: var(--white);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+        h1,
+        h2,
+        h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
         }
         h1 {
             text-align: center;
-            color: #2c3e50;
+            font-size: 1.8rem;
             margin-bottom: 25px;
-        }
-        .schedule-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 25px;
-            background: white;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        .schedule-table th, .schedule-table td {
-            border: 1px solid #e0e0e0;
-            padding: 12px;
-            text-align: center;
-        }
-        .schedule-table th {
-            background: #3498db;
-            color: white;
-            font-weight: 500;
-        }
-        .schedule-table tr:nth-child(even) {
-            background: #f8f9fa;
-        }
-        .task-form {
-            background: #e3f2fd;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-family: 'Poppins', sans-serif;
-        }
-        textarea.form-control {
-            min-height: 80px;
-            resize: vertical;
         }
         .btn {
-            background: #2ecc71;
-            color: white;
+            background: var(--secondary-color);
+            color: var(--white);
             border: none;
             padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
             font-weight: 500;
             transition: background 0.3s;
+            font-size: 1rem;
+            width: 100%;
+            margin-top: 5px;
         }
-        .btn:hover {
-            background: #27ae60;
+        .btn-primary {
+            background: var(--primary-color);
         }
+        .hidden {
+            display: none;
+        }
+        .logout-btn {
+            background: var(--danger-color);
+            color: var(--white);
+            width: auto;
+            padding: 6px 12px;
+            font-size: 0.9rem;
+            border-radius: 5px;
+            float: right;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        /* Jadwal Pelajaran */
+        .schedule {
+            margin-top: 30px;
+        }
+        .schedule-container {
+            overflow-x: auto;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius);
+        }
+        .schedule-table {
+            width: 100%;
+            min-width: 600px;
+            border-collapse: collapse;
+            background: var(--white);
+        }
+        .schedule-table th,
+        .schedule-table td {
+            border: 1px solid var(--medium-gray);
+            padding: 12px 8px;
+            text-align: center;
+            font-weight: 500;
+        }
+        .schedule-table th {
+            background: var(--primary-color);
+            color: var(--white);
+        }
+        .schedule-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        /* Task List */
         .task-list {
             margin-top: 25px;
         }
         .task-card {
-            background: white;
-            border-left: 4px solid #3498db;
+            background: var(--white);
+            border-left: 4px solid var(--primary-color);
             padding: 15px;
             margin-bottom: 15px;
             border-radius: 0 8px 8px 0;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         }
         .task-card.completed {
-            border-left-color: #2ecc71;
+            border-left-color: var(--secondary-color);
             opacity: 0.8;
         }
         .task-title {
-            font-size: 18px;
+            font-size: 1.1rem;
             font-weight: 600;
             margin-bottom: 5px;
+            word-break: break-word;
         }
         .task-meta {
-            color: #666;
+            color: var(--dark-gray);
             margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+        .task-meta span {
+            display: inline-block;
+            margin-right: 10px;
         }
         .task-description {
             margin-bottom: 10px;
             padding: 10px;
             background: #f8f9fa;
             border-radius: 5px;
-            font-size: 14px;
+            font-size: 0.95rem;
+            word-break: break-word;
         }
         .task-link {
             display: inline-block;
             margin-bottom: 10px;
-            color: #3498db;
+            color: var(--primary-color);
             text-decoration: none;
             word-break: break-all;
+            font-size: 0.9rem;
         }
         .task-link:hover {
             text-decoration: underline;
@@ -128,154 +162,168 @@
         .task-actions {
             display: flex;
             gap: 10px;
+            margin-top: 10px;
         }
         .action-btn {
-            padding: 5px 12px;
+            padding: 8px 12px;
             border: none;
             border-radius: 4px;
-            cursor: button;
+            cursor: pointer;
             font-weight: 500;
+            font-size: 0.9rem;
+            flex: 1;
+            transition: opacity 0.3s;
+        }
+        .action-btn:hover {
+            opacity: 0.9;
         }
         .complete-btn {
-            background: #2ecc71;
-            color: white;
+            background: var(--secondary-color);
+            color: var(--white);
         }
         .delete-btn {
-            background: #e74c3c;
-            color: white;
+            background: var(--danger-color);
+            color: var(--white);
         }
-        .admin-panel {
-            background: #fff3cd;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            text-align: center;
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+            .task-card {
+                padding: 10px;
+            }
+            .schedule-table th,
+            .schedule-table td {
+                padding: 8px 5px;
+                font-size: 0.85rem;
+            }
+            .task-meta span {
+                display: block;
+                margin-right: 0;
+                margin-bottom: 5px;
+            }
+            .task-actions {
+                flex-direction: column;
+                gap: 5px;
+            }
         }
-        .hidden {
-            display: none;
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 12px;
+            }
+            .schedule-table {
+                min-width: 100%;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>📚 Daftar Tugas Pelajar</h1>
-        
-        <!-- Admin Login (Sederhana) -->
+        <!-- Tombol Logout -->
+        <button id="logoutBtn" class="logout-btn hidden">🚪 Logout</button>
+        <!-- Admin Login (Firebase Auth) -->
         <div class="admin-panel" id="adminPanel">
             <h3>🔒 Login Admin</h3>
-            <input type="password" id="adminPassword" placeholder="Masukkan Password Admin" class="form-control" style="width: 200px; display: inline-block;">
-            <button class="btn" id="loginBtn">Login</button>
+            <div class="form-group">
+                <input type="email" id="adminEmail" placeholder="Masukkan Email Admin" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="password" id="adminPassword" placeholder="Masukkan Password Admin" class="form-control" />
+            </div>
+            <button class="btn btn-primary" id="loginBtn">Login</button>
         </div>
-        
         <!-- Form Tambah Tugas (Hanya muncul setelah login) -->
         <div class="task-form hidden" id="taskForm">
             <h2>➕ Tambah Tugas Baru</h2>
             <div class="form-group">
-                <label for="taskName">Nama Tugas</label>
-                <input type="text" id="taskName" class="form-control" required>
+                <label>Nama Tugas</label>
+                <input type="text" id="taskName" class="form-control" required />
             </div>
             <div class="form-group">
-                <label for="taskSubject">Mata Pelajaran</label>
-                <select id="taskSubject" class="form-control" required>
-                    <option value="">Pilih Pelajaran</option>
-                    <option value="Matematika">Matematika</option>
-                    <option value="Fisika">Fisika</option>
-                    <option value="Kimia">Kimia</option>
-                    <option value="Biologi">Biologi</option>
-                    <option value="Bahasa Indonesia">Bahasa Indonesia</option>
-                    <option value="Bahasa Inggris">Bahasa Inggris</option>
-                    <option value="Sejarah">Sejarah</option>
-                    <option value="Ekonomi">Ekonomi</option>
-                    <option value="Bimbingan Konseling">Bimbingan Konseling</option>
-                    <option value="Geografi">Geografi</option>
-                    <option value="Olahraga">Olahraga</option>
-                    <option value="PAI">PAI</option>
-                    <option value="PAK">PAK</option>
-                    <option value="Bahasa Jawa">Bahasa Jawa</option>
-                    <option value="Informatika">Informatika</option>
-                    <option value="Seni Budaya">Seni Budaya</option>
-                    <option value="PPKn">PPKn</option>
-                </select>
+                <label>Mata Pelajaran</label>
+                <input type="text" id="taskSubject" class="form-control" required />
             </div>
             <div class="form-group">
-                <label for="taskDay">Hari</label>
-                <select id="taskDay" class="form-control" required>
-                    <option value="">Pilih Hari</option>
-                    <option value="Senin">Senin</option>
-                    <option value="Selasa">Selasa</option>
-                    <option value="Rabu">Rabu</option>
-                    <option value="Kamis">Kamis</option>
-                    <option value="Jumat">Jumat</option>
-                </select>
+                <label>Hari</label>
+                <input type="text" id="taskDay" class="form-control" required />
             </div>
             <div class="form-group">
-                <label for="taskDueDate">Deadline</label>
-                <input type="date" id="taskDueDate" class="form-control" required>
+                <label>Deadline</label>
+                <input type="date" id="taskDueDate" class="form-control" required />
             </div>
             <div class="form-group">
-                <label for="taskDescription">Deskripsi Tugas (Detail)</label>
-                <textarea id="taskDescription" class="form-control" placeholder="Masukkan detail tugas..."></textarea>
+                <label>Deskripsi</label>
+                <textarea id="taskDescription" class="form-control"></textarea>
             </div>
             <div class="form-group">
-                <label for="taskLink">Link Tugas (Jika ada)</label>
-                <input type="url" id="taskLink" class="form-control" placeholder="https://contoh.com/tugas">
+                <label>Link</label>
+                <input type="url" id="taskLink" class="form-control" />
             </div>
-            <button class="btn" id="addTaskBtn">Tambah Tugas</button>
+            <button class="btn btn-primary" id="addTaskBtn">Tambah Tugas</button>
         </div>
-        
-        <!-- Jadwal Pelajaran -->
+<!-- Jadwal Pelajaran -->
         <div class="schedule">
             <h2>📅 Jadwal Pelajaran</h2>
-            <table class="schedule-table">
-                <thead>
-                    <tr>
-                        <th>Hari</th>
-                        <th>Jam 1</th>
-                        <th>Jam 2</th>
-                        <th>Jam 3</th>
-                        <th>Jam 4</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Senin</td>
-                        <td>Seni Budaya</td>
-                        <td>Sosiologi</td>
-                        <td>Ppkn</td>
-                        <td>Kimia</td>
-                    </tr>
-                    <tr>
-                        <td>Selasa</td>
-                        <td>Informatika</td>
-                        <td>Ekonomi</td>
-                        <td>Bahasa Jawa</td>
-                        <td>PAI/PAK</td>
-                    </tr>
-                    <tr>
-                        <td>Rabu</td>
-                        <td>Geografi</td>
-                        <td>Fisika</td>
-                        <td>Bahasa Indonesia</td>
-                        <td>Matematika</td>
-                    </tr>
-                    <tr>
-                        <td>Kamis</td>
-                        <td>Matematika</td>
-                        <td>Bahasa Indonesia</td>
-                        <td>Bahasa Inggris</td>
-                        <td>Sejarah</td>
-                    </tr>
-                    <tr>
-                        <td>Jumat</td>
-                        <td>Olahraga</td>
-                        <td>Biologi</td>
-                        <td>Bimbingan Konseling</td>
-                        <td></td>
-                    </tr>
-                </tbody>
-            </table>
-          </div>
-        
+            <div class="schedule-container">
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>Hari</th>
+                            <th>Jam 1</th>
+                            <th>Jam 2</th>
+                            <th>Jam 3</th>
+                            <th>Jam 4</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Senin</td>
+                            <td>Seni Budaya</td>
+                            <td>Sosiologi</td>
+                            <td>Ppkn</td>
+                            <td>Kimia</td>
+                        </tr>
+                        <tr>
+                            <td>Selasa</td>
+                            <td>Informatika</td>
+                            <td>Ekonomi</td>
+                            <td>Bahasa Jawa</td>
+                            <td>PAI/PAK</td>
+                        </tr>
+                        <tr>
+                            <td>Rabu</td>
+                            <td>Geografi</td>
+                            <td>Fisika</td>
+                            <td>Bahasa Indonesia</td>
+                            <td>Matematika</td>
+                        </tr>
+                        <tr>
+                            <td>Kamis</td>
+                            <td>Matematika</td>
+                            <td>Bahasa Indonesia</td>
+                            <td>Bahasa Inggris</td>
+                            <td>Sejarah</td>
+                        </tr>
+                        <tr>
+                            <td>Jumat</td>
+                            <td>Olahraga</td>
+                            <td>Biologi</td>
+                            <td>Bimbingan Konseling</td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <!-- Daftar Tugas -->
         <div class="task-list">
             <h2>📋 Daftar Tugas</h2>
@@ -288,9 +336,10 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 
     <script>
-        // 🔥 Firebase Config (Ganti dengan konfigurasi Anda)
+        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyCXO3ANj3rSKKysHvr0OUGbhIrFzYPUei4",
             authDomain: "tugas-xf.firebaseapp.com",
@@ -300,148 +349,106 @@
             messagingSenderId: "712155078672",
             appId: "1:712155078672:web:c8f78db71bf76172112a95"
         };
-
-        // Inisialisasi Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-
-        // 🔑 Password Admin (Sederhana, bisa diganti)
-        const ADMIN_PASSWORD = "xftugas";
-
-        // 📌 Variabel Global
         let isAdmin = false;
 
-        // 🎯 Fungsi: Tampilkan Daftar Tugas dari Firebase
+        // Fungsi Load Tugas
         function loadTasks() {
             database.ref('tasks').on('value', (snapshot) => {
                 const tasks = snapshot.val();
-                const tasksContainer = document.getElementById('tasksContainer');
-                
+                const container = document.getElementById('tasksContainer');
                 if (!tasks) {
-                    tasksContainer.innerHTML = '<p>Belum ada tugas.</p>';
+                    container.innerHTML = '<p>Belum ada tugas.</p>';
                     return;
                 }
-
-                tasksContainer.innerHTML = '';
-                Object.entries(tasks).forEach(([taskId, task]) => {
-                    const taskElement = document.createElement('div');
-                    taskElement.className = `task-card ${task.completed ? 'completed' : ''}`;
-                    
-                    let descriptionHTML = '';
-                    if (task.description) {
-                        descriptionHTML = `<div class="task-description">${task.description}</div>`;
-                    }
-                    
-                    let linkHTML = '';
-                    if (task.link) {
-                        linkHTML = `<a href="${task.link}" target="_blank" class="task-link">🔗 ${task.link}</a>`;
-                    }
-                    
-                    taskElement.innerHTML = `
+                const tasksArray = Object.entries(tasks).map(([id, task]) => ({ id, ...task }));
+                tasksArray.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+                container.innerHTML = '';
+                tasksArray.forEach(task => {
+                    const div = document.createElement('div');
+                    div.className = `task-card ${task.completed ? 'completed' : ''}`;
+                    div.innerHTML = `
                         <div class="task-title">${task.name}</div>
                         <div class="task-meta">
-                            <strong>Pelajaran:</strong> ${task.subject} | 
-                            <strong>Hari:</strong> ${task.day} | 
-                            <strong>Deadline:</strong> ${formatDate(task.dueDate)}
+                            <span><strong>Pelajaran:</strong> ${task.subject}</span>
+                            <span><strong>Hari:</strong> ${task.day}</span>
+                            <span><strong>Deadline:</strong> ${task.dueDate}</span>
                         </div>
-                        ${descriptionHTML}
-                        ${linkHTML}
+                        ${task.description ? `<div class="task-description">${task.description}</div>` : ''}
+                        ${task.link ? `<a href="${task.link}" target="_blank" class="task-link">${task.link}</a>` : ''}
                         ${isAdmin ? `
                         <div class="task-actions">
-                            <button class="action-btn complete-btn" data-id="${taskId}">
-                                ${task.completed ? '❌ Batalkan' : '✅ Selesai'}
-                            </button>
-                            <button class="action-btn delete-btn" data-id="${taskId}">🗑️ Hapus</button>
-                        </div>
-                        ` : ''}
+                            <button class="action-btn complete-btn" onclick="toggleTaskComplete('${task.id}')">${task.completed ? '❌ Batalkan' : '✅ Selesai'}</button>
+                            <button class="action-btn delete-btn" onclick="deleteTask('${task.id}')">🗑️ Hapus</button>
+                        </div>` : ''}
                     `;
-                    tasksContainer.appendChild(taskElement);
-                });
-
-                // Tambahkan event listener untuk admin
-                if (isAdmin) {
-                    document.querySelectorAll('.complete-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            const taskId = e.target.getAttribute('data-id');
-                            toggleTaskComplete(taskId);
-                        });
-                    });
-
-                    document.querySelectorAll('.delete-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            const taskId = e.target.getAttribute('data-id');
-                            deleteTask(taskId);
-                        });
-                    });
-                }
-            });
-        }
-
-        // 📅 Fungsi: Format Tanggal
-        function formatDate(dateString) {
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            return new Date(dateString).toLocaleDateString('id-ID', options);
-        }
-
-        // 🔄 Fungsi: Toggle Status Tugas (Selesai/Belum)
-        function toggleTaskComplete(taskId) {
-            database.ref('tasks/' + taskId).once('value', (snapshot) => {
-                const task = snapshot.val();
-                database.ref('tasks/' + taskId).update({
-                    completed: !task.completed
+                    container.appendChild(div);
                 });
             });
         }
 
-        // ❌ Fungsi: Hapus Tugas
-        function deleteTask(taskId) {
-            if (confirm('Yakin ingin menghapus tugas ini?')) {
-                database.ref('tasks/' + taskId).remove();
+        function toggleTaskComplete(id) {
+            database.ref('tasks/' + id).once('value', snap => {
+                const task = snap.val();
+                database.ref('tasks/' + id).update({ completed: !task.completed });
+            });
+        }
+
+        function deleteTask(id) {
+            if (confirm('Hapus tugas ini?')) {
+                database.ref('tasks/' + id).remove();
             }
         }
 
-        // 👑 Fungsi: Login Admin
+        // Login Admin
         document.getElementById('loginBtn').addEventListener('click', () => {
-            const password = document.getElementById('adminPassword').value;
-            if (password === ADMIN_PASSWORD) {
+            const email = document.getElementById('adminEmail').value.trim();
+            const pass = document.getElementById('adminPassword').value.trim();
+            if (!email || !pass) return alert('Isi email dan password!');
+            firebase.auth().signInWithEmailAndPassword(email, pass)
+                .then(() => { /* Login berhasil */ })
+                .catch(err => alert('Login gagal: ' + err.message));
+        });
+
+        // Logout Admin
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            firebase.auth().signOut();
+        });
+
+        // Cek status login
+        firebase.auth().onAuthStateChanged(user => {
+            if (user) {
                 isAdmin = true;
                 document.getElementById('adminPanel').classList.add('hidden');
                 document.getElementById('taskForm').classList.remove('hidden');
-                loadTasks(); // Muat ulang daftar tugas dengan opsi admin
+                document.getElementById('logoutBtn').classList.remove('hidden');
             } else {
-                alert('Password salah!');
+                isAdmin = false;
+                document.getElementById('adminPanel').classList.remove('hidden');
+                document.getElementById('taskForm').classList.add('hidden');
+                document.getElementById('logoutBtn').classList.add('hidden');
             }
+            loadTasks();
         });
 
-        // ➕ Fungsi: Tambah Tugas Baru
+        // Tambah Tugas
         document.getElementById('addTaskBtn').addEventListener('click', () => {
-            const taskName = document.getElementById('taskName').value;
-            const taskSubject = document.getElementById('taskSubject').value;
-            const taskDay = document.getElementById('taskDay').value;
-            const taskDueDate = document.getElementById('taskDueDate').value;
-            const taskDescription = document.getElementById('taskDescription').value;
-            const taskLink = document.getElementById('taskLink').value;
-
-            if (!taskName || !taskSubject || !taskDay || !taskDueDate) {
-                alert('Harap isi semua field yang wajib!');
-                return;
-            }
-
-            const newTask = {
+            const taskName = document.getElementById('taskName').value.trim();
+            const subject = document.getElementById('taskSubject').value.trim();
+            const day = document.getElementById('taskDay').value.trim();
+            const dueDate = document.getElementById('taskDueDate').value;
+            const desc = document.getElementById('taskDescription').value.trim();
+            const link = document.getElementById('taskLink').value.trim();
+            if (!taskName || !subject || !day || !dueDate) return alert('Lengkapi data!');
+            database.ref('tasks').push({
                 name: taskName,
-                subject: taskSubject,
-                day: taskDay,
-                dueDate: taskDueDate,
-                description: taskDescription,
-                link: taskLink,
-                completed: false,
+                subject, day, dueDate,
+                description: desc,
+                link, completed: false,
                 createdAt: new Date().toISOString()
-            };
-
-            database.ref('tasks').push(newTask);
-            alert('Tugas berhasil ditambahkan!');
-
-            // Reset form
+            });
+            alert('Tugas ditambahkan!');
             document.getElementById('taskName').value = '';
             document.getElementById('taskSubject').value = '';
             document.getElementById('taskDay').value = '';
@@ -450,8 +457,8 @@
             document.getElementById('taskLink').value = '';
         });
 
-        // 🚀 Muat Tugas Saat Halaman Dibuka
-        loadTasks();
+        // Set default tanggal deadline ke hari ini
+        document.getElementById('taskDueDate').valueAsDate = new Date();
     </script>
 </body>
 </html>
