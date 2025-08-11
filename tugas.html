@@ -67,6 +67,10 @@
             border-radius: 5px;
             font-family: 'Poppins', sans-serif;
         }
+        textarea.form-control {
+            min-height: 80px;
+            resize: vertical;
+        }
         .btn {
             background: #2ecc71;
             color: white;
@@ -103,6 +107,23 @@
         .task-meta {
             color: #666;
             margin-bottom: 10px;
+        }
+        .task-description {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .task-link {
+            display: inline-block;
+            margin-bottom: 10px;
+            color: #3498db;
+            text-decoration: none;
+            word-break: break-all;
+        }
+        .task-link:hover {
+            text-decoration: underline;
         }
         .task-actions {
             display: flex;
@@ -181,6 +202,14 @@
             <div class="form-group">
                 <label for="taskDueDate">Deadline</label>
                 <input type="date" id="taskDueDate" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="taskDescription">Deskripsi Tugas (Detail)</label>
+                <textarea id="taskDescription" class="form-control" placeholder="Masukkan detail tugas..."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="taskLink">Link Tugas (Jika ada)</label>
+                <input type="url" id="taskLink" class="form-control" placeholder="https://contoh.com/tugas">
             </div>
             <button class="btn" id="addTaskBtn">Tambah Tugas</button>
         </div>
@@ -288,6 +317,17 @@
                 Object.entries(tasks).forEach(([taskId, task]) => {
                     const taskElement = document.createElement('div');
                     taskElement.className = `task-card ${task.completed ? 'completed' : ''}`;
+                    
+                    let descriptionHTML = '';
+                    if (task.description) {
+                        descriptionHTML = `<div class="task-description">${task.description}</div>`;
+                    }
+                    
+                    let linkHTML = '';
+                    if (task.link) {
+                        linkHTML = `<a href="${task.link}" target="_blank" class="task-link">🔗 ${task.link}</a>`;
+                    }
+                    
                     taskElement.innerHTML = `
                         <div class="task-title">${task.name}</div>
                         <div class="task-meta">
@@ -295,6 +335,8 @@
                             <strong>Hari:</strong> ${task.day} | 
                             <strong>Deadline:</strong> ${formatDate(task.dueDate)}
                         </div>
+                        ${descriptionHTML}
+                        ${linkHTML}
                         ${isAdmin ? `
                         <div class="task-actions">
                             <button class="action-btn complete-btn" data-id="${taskId}">
@@ -368,9 +410,11 @@
             const taskSubject = document.getElementById('taskSubject').value;
             const taskDay = document.getElementById('taskDay').value;
             const taskDueDate = document.getElementById('taskDueDate').value;
+            const taskDescription = document.getElementById('taskDescription').value;
+            const taskLink = document.getElementById('taskLink').value;
 
             if (!taskName || !taskSubject || !taskDay || !taskDueDate) {
-                alert('Harap isi semua field!');
+                alert('Harap isi semua field yang wajib!');
                 return;
             }
 
@@ -379,6 +423,8 @@
                 subject: taskSubject,
                 day: taskDay,
                 dueDate: taskDueDate,
+                description: taskDescription,
+                link: taskLink,
                 completed: false,
                 createdAt: new Date().toISOString()
             };
@@ -391,6 +437,8 @@
             document.getElementById('taskSubject').value = '';
             document.getElementById('taskDay').value = '';
             document.getElementById('taskDueDate').value = '';
+            document.getElementById('taskDescription').value = '';
+            document.getElementById('taskLink').value = '';
         });
 
         // 🚀 Muat Tugas Saat Halaman Dibuka
