@@ -3,54 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Tugas Pelajar (Firebase)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>Daftar Tugas Pelajar XF</title>
     <style>
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #f0f2f5;
-            color: #333;
+            background-color: #f5f5f5;
         }
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         h1 {
             text-align: center;
             color: #2c3e50;
-            margin-bottom: 25px;
-        }
-        .schedule-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 25px;
-            background: white;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        .schedule-table th, .schedule-table td {
-            border: 1px solid #e0e0e0;
-            padding: 12px;
-            text-align: center;
-        }
-        .schedule-table th {
-            background: #3498db;
-            color: white;
-            font-weight: 500;
-        }
-        .schedule-table tr:nth-child(even) {
-            background: #f8f9fa;
         }
         .task-form {
-            background: #e3f2fd;
+            background-color: #e3f2fd;
             padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 25px;
+            border-radius: 5px;
+            margin: 20px 0;
         }
         .form-group {
             margin-bottom: 15px;
@@ -58,104 +35,71 @@
         .form-group label {
             display: block;
             margin-bottom: 5px;
-            font-weight: 500;
+            font-weight: bold;
         }
-        .form-control {
+        input, select {
+            padding: 8px;
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-family: 'Poppins', sans-serif;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
         }
-        .btn {
-            background: #2ecc71;
+        button {
+            background-color: #4CAF50;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: background 0.3s;
-        }
-        .btn:hover {
-            background: #27ae60;
-        }
-        .task-list {
-            margin-top: 25px;
-        }
-        .task-card {
-            background: white;
-            border-left: 4px solid #3498db;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 0 8px 8px 0;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-        }
-        .task-card.completed {
-            border-left-color: #2ecc71;
-            opacity: 0.8;
-        }
-        .task-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-        .task-meta {
-            color: #666;
-            margin-bottom: 10px;
-        }
-        .task-actions {
-            display: flex;
-            gap: 10px;
-        }
-        .action-btn {
-            padding: 5px 12px;
-            border: none;
+            padding: 10px 15px;
             border-radius: 4px;
             cursor: pointer;
-            font-weight: 500;
+            font-size: 16px;
         }
-        .complete-btn {
-            background: #2ecc71;
-            color: white;
+        button:hover {
+            background-color: #45a049;
+        }
+        .task-list {
+            margin-top: 20px;
+        }
+        .task-item {
+            background-color: white;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 0 5px 5px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .task-item.completed {
+            border-left-color: #4CAF50;
+            opacity: 0.7;
+        }
+        .task-actions {
+            margin-top: 10px;
+        }
+        .task-actions button {
+            padding: 5px 10px;
+            margin-right: 5px;
+            font-size: 14px;
         }
         .delete-btn {
-            background: #e74c3c;
-            color: white;
+            background-color: #f44336;
         }
-        .admin-panel {
-            background: #fff3cd;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .hidden {
-            display: none;
+        .delete-btn:hover {
+            background-color: #d32f2f;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📚 Daftar Tugas Pelajar (Firebase)</h1>
+        <h1>Daftar Tugas Pelajar XF</h1>
         
-        <!-- Admin Login (Sederhana) -->
-        <div class="admin-panel" id="adminPanel">
-            <h3>🔒 Login Admin</h3>
-            <input type="password" id="adminPassword" placeholder="Masukkan Password Admin" class="form-control" style="width: 200px; display: inline-block;">
-            <button class="btn" id="loginBtn">Login</button>
-        </div>
-        
-        <!-- Form Tambah Tugas (Hanya muncul setelah login) -->
-        <div class="task-form hidden" id="taskForm">
-            <h2>➕ Tambah Tugas Baru</h2>
+        <div class="task-form">
+            <h2>Tambah Tugas Baru</h2>
             <div class="form-group">
                 <label for="taskName">Nama Tugas</label>
-                <input type="text" id="taskName" class="form-control" required>
+                <input type="text" id="taskName" required>
             </div>
             <div class="form-group">
                 <label for="taskSubject">Mata Pelajaran</label>
-                <select id="taskSubject" class="form-control" required>
+                <select id="taskSubject" required>
                     <option value="">Pilih Pelajaran</option>
                     <option value="Matematika">Matematika</option>
                     <option value="Fisika">Fisika</option>
@@ -164,12 +108,11 @@
                     <option value="Bahasa Indonesia">Bahasa Indonesia</option>
                     <option value="Bahasa Inggris">Bahasa Inggris</option>
                     <option value="Sejarah">Sejarah</option>
-                    <option value="Ekonomi">Ekonomi</option>
                 </select>
             </div>
             <div class="form-group">
                 <label for="taskDay">Hari</label>
-                <select id="taskDay" class="form-control" required>
+                <select id="taskDay" required>
                     <option value="">Pilih Hari</option>
                     <option value="Senin">Senin</option>
                     <option value="Selasa">Selasa</option>
@@ -180,67 +123,14 @@
             </div>
             <div class="form-group">
                 <label for="taskDueDate">Deadline</label>
-                <input type="date" id="taskDueDate" class="form-control" required>
+                <input type="date" id="taskDueDate" required>
             </div>
-            <button class="btn" id="addTaskBtn">Tambah Tugas</button>
+            <button id="addTaskBtn">Tambah Tugas</button>
+            <p id="errorMessage" style="color:red;"></p>
         </div>
         
-        <!-- Jadwal Pelajaran -->
-        <div class="schedule">
-            <h2>📅 Jadwal Pelajaran</h2>
-            <table class="schedule-table">
-                <thead>
-                    <tr>
-                        <th>Hari</th>
-                        <th>Jam 1</th>
-                        <th>Jam 2</th>
-                        <th>Jam 3</th>
-                        <th>Jam 4</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Senin</td>
-                        <td>Matematika</td>
-                        <td>Fisika</td>
-                        <td>Kimia</td>
-                        <td>Biologi</td>
-                    </tr>
-                    <tr>
-                        <td>Selasa</td>
-                        <td>Bahasa Indonesia</td>
-                        <td>Bahasa Inggris</td>
-                        <td>Sejarah</td>
-                        <td>Ekonomi</td>
-                    </tr>
-                    <tr>
-                        <td>Rabu</td>
-                        <td>Matematika</td>
-                        <td>Fisika</td>
-                        <td>Kimia</td>
-                        <td>Biologi</td>
-                    </tr>
-                    <tr>
-                        <td>Kamis</td>
-                        <td>Bahasa Indonesia</td>
-                        <td>Bahasa Inggris</td>
-                        <td>Sejarah</td>
-                        <td>Ekonomi</td>
-                    </tr>
-                    <tr>
-                        <td>Jumat</td>
-                        <td>Olahraga</td>
-                        <td>Seni Budaya</td>
-                        <td>BK</td>
-                        <td>Agama</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        
-        <!-- Daftar Tugas -->
         <div class="task-list">
-            <h2>📋 Daftar Tugas</h2>
+            <h2>Daftar Tugas</h2>
             <div id="tasksContainer">
                 <p>Memuat daftar tugas...</p>
             </div>
@@ -252,7 +142,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        // Konfigurasi Firebase Anda
         const firebaseConfig = {
             apiKey: "AIzaSyCXO3ANj3rSKKysHvr0OUGbhIrFzYPUei4",
             authDomain: "tugas-xf.firebaseapp.com",
@@ -268,113 +158,26 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // 🔑 Password Admin (Sederhana, bisa diganti)
-        const ADMIN_PASSWORD = "admin123";
+        // Referensi ke database
+        const tasksRef = database.ref('tasks');
 
-        // 📌 Variabel Global
-        let isAdmin = false;
-
-        // 🎯 Fungsi: Tampilkan Daftar Tugas dari Firebase
-        function loadTasks() {
-            database.ref('tasks').on('value', (snapshot) => {
-                const tasks = snapshot.val();
-                const tasksContainer = document.getElementById('tasksContainer');
-                
-                if (!tasks) {
-                    tasksContainer.innerHTML = '<p>Belum ada tugas.</p>';
-                    return;
-                }
-
-                tasksContainer.innerHTML = '';
-                Object.entries(tasks).forEach(([taskId, task]) => {
-                    const taskElement = document.createElement('div');
-                    taskElement.className = `task-card ${task.completed ? 'completed' : ''}`;
-                    taskElement.innerHTML = `
-                        <div class="task-title">${task.name}</div>
-                        <div class="task-meta">
-                            <strong>Pelajaran:</strong> ${task.subject} | 
-                            <strong>Hari:</strong> ${task.day} | 
-                            <strong>Deadline:</strong> ${formatDate(task.dueDate)}
-                        </div>
-                        ${isAdmin ? `
-                        <div class="task-actions">
-                            <button class="action-btn complete-btn" data-id="${taskId}">
-                                ${task.completed ? '❌ Batalkan' : '✅ Selesai'}
-                            </button>
-                            <button class="action-btn delete-btn" data-id="${taskId}">🗑️ Hapus</button>
-                        </div>
-                        ` : ''}
-                    `;
-                    tasksContainer.appendChild(taskElement);
-                });
-
-                // Tambahkan event listener untuk admin
-                if (isAdmin) {
-                    document.querySelectorAll('.complete-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            const taskId = e.target.getAttribute('data-id');
-                            toggleTaskComplete(taskId);
-                        });
-                    });
-
-                    document.querySelectorAll('.delete-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            const taskId = e.target.getAttribute('data-id');
-                            deleteTask(taskId);
-                        });
-                    });
-                }
-            });
-        }
-
-        // 📅 Fungsi: Format Tanggal
-        function formatDate(dateString) {
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            return new Date(dateString).toLocaleDateString('id-ID', options);
-        }
-
-        // 🔄 Fungsi: Toggle Status Tugas (Selesai/Belum)
-        function toggleTaskComplete(taskId) {
-            database.ref('tasks/' + taskId).once('value', (snapshot) => {
-                const task = snapshot.val();
-                database.ref('tasks/' + taskId).update({
-                    completed: !task.completed
-                });
-            });
-        }
-
-        // ❌ Fungsi: Hapus Tugas
-        function deleteTask(taskId) {
-            if (confirm('Yakin ingin menghapus tugas ini?')) {
-                database.ref('tasks/' + taskId).remove();
-            }
-        }
-
-        // 👑 Fungsi: Login Admin
-        document.getElementById('loginBtn').addEventListener('click', () => {
-            const password = document.getElementById('adminPassword').value;
-            if (password === ADMIN_PASSWORD) {
-                isAdmin = true;
-                document.getElementById('adminPanel').classList.add('hidden');
-                document.getElementById('taskForm').classList.remove('hidden');
-                loadTasks(); // Muat ulang daftar tugas dengan opsi admin
-            } else {
-                alert('Password salah!');
-            }
-        });
-
-        // ➕ Fungsi: Tambah Tugas Baru
+        // Tambah tugas baru
         document.getElementById('addTaskBtn').addEventListener('click', () => {
             const taskName = document.getElementById('taskName').value;
             const taskSubject = document.getElementById('taskSubject').value;
             const taskDay = document.getElementById('taskDay').value;
             const taskDueDate = document.getElementById('taskDueDate').value;
-
+            
+            // Validasi input
             if (!taskName || !taskSubject || !taskDay || !taskDueDate) {
-                alert('Harap isi semua field!');
+                document.getElementById('errorMessage').textContent = 'Harap isi semua field!';
                 return;
             }
-
+            
+            // Reset pesan error
+            document.getElementById('errorMessage').textContent = '';
+            
+            // Buat objek tugas baru
             const newTask = {
                 name: taskName,
                 subject: taskSubject,
@@ -383,19 +186,71 @@
                 completed: false,
                 createdAt: new Date().toISOString()
             };
-
-            database.ref('tasks').push(newTask);
-            alert('Tugas berhasil ditambahkan!');
-
-            // Reset form
-            document.getElementById('taskName').value = '';
-            document.getElementById('taskSubject').value = '';
-            document.getElementById('taskDay').value = '';
-            document.getElementById('taskDueDate').value = '';
+            
+            // Push ke Firebase
+            tasksRef.push(newTask)
+                .then(() => {
+                    // Reset form setelah berhasil
+                    document.getElementById('taskName').value = '';
+                    document.getElementById('taskSubject').value = '';
+                    document.getElementById('taskDay').value = '';
+                    document.getElementById('taskDueDate').value = '';
+                })
+                .catch((error) => {
+                    document.getElementById('errorMessage').textContent = 'Gagal menambahkan tugas: ' + error.message;
+                });
         });
 
-        // 🚀 Muat Tugas Saat Halaman Dibuka
-        loadTasks();
+        // Menampilkan daftar tugas
+        tasksRef.on('value', (snapshot) => {
+            const tasksContainer = document.getElementById('tasksContainer');
+            const tasks = snapshot.val();
+            
+            if (!tasks) {
+                tasksContainer.innerHTML = '<p>Belum ada tugas.</p>';
+                return;
+            }
+            
+            tasksContainer.innerHTML = '';
+            
+            Object.entries(tasks).forEach(([taskId, task]) => {
+                const taskElement = document.createElement('div');
+                taskElement.className = `task-item ${task.completed ? 'completed' : ''}`;
+                taskElement.innerHTML = `
+                    <h3>${task.name}</h3>
+                    <p><strong>Pelajaran:</strong> ${task.subject}</p>
+                    <p><strong>Hari:</strong> ${task.day}</p>
+                    <p><strong>Deadline:</strong> ${new Date(task.dueDate).toLocaleDateString('id-ID')}</p>
+                    <div class="task-actions">
+                        <button class="complete-btn" data-id="${taskId}">
+                            ${task.completed ? 'Batalkan' : 'Selesai'}
+                        </button>
+                        <button class="delete-btn" data-id="${taskId}">Hapus</button>
+                    </div>
+                `;
+                
+                tasksContainer.appendChild(taskElement);
+            });
+            
+            // Tambahkan event listener untuk tombol
+            document.querySelectorAll('.complete-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const taskId = e.target.getAttribute('data-id');
+                    tasksRef.child(taskId).update({
+                        completed: !tasks[taskId].completed
+                    });
+                });
+            });
+            
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    if (confirm('Apakah Anda yakin ingin menghapus tugas ini?')) {
+                        const taskId = e.target.getAttribute('data-id');
+                        tasksRef.child(taskId).remove();
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>
