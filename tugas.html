@@ -4,103 +4,228 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daftar Tugas Pelajar XF</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        * {
+            box-sizing: border-box;
             margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
         }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
         .container {
-            max-width: 1000px;
+            max-width: 900px;
             margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
+        
+        h1, h2, h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
         h1 {
             text-align: center;
-            color: #2c3e50;
+            font-size: 28px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
         }
+        
+        h2 {
+            font-size: 22px;
+            margin-top: 25px;
+        }
+        
+        .auth-message {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .connecting {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .connected {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
         .task-form {
             background-color: #e3f2fd;
             padding: 20px;
-            border-radius: 5px;
-            margin: 20px 0;
+            border-radius: 8px;
+            margin-bottom: 25px;
         }
+        
         .form-group {
             margin-bottom: 15px;
         }
+        
         .form-group label {
             display: block;
             margin-bottom: 5px;
-            font-weight: bold;
+            font-weight: 500;
+            color: #2c3e50;
         }
-        input, select {
-            padding: 8px;
+        
+        .form-control {
             width: 100%;
-            box-sizing: border-box;
-            border: 1px solid #ddd;
+            padding: 10px;
+            border: 1px solid #ced4da;
             border-radius: 4px;
+            font-size: 16px;
         }
-        button {
-            background-color: #4CAF50;
+        
+        select.form-control {
+            height: 40px;
+        }
+        
+        .btn {
+            background-color: #3498db;
             color: white;
             border: none;
-            padding: 10px 15px;
+            padding: 10px 20px;
             border-radius: 4px;
             cursor: pointer;
             font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s;
         }
-        button:hover {
-            background-color: #45a049;
+        
+        .btn:hover {
+            background-color: #2980b9;
         }
+        
+        .btn-success {
+            background-color: #2ecc71;
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
         .task-list {
-            margin-top: 20px;
+            margin-top: 25px;
         }
-        .task-item {
-            background-color: white;
-            border-left: 4px solid #2196F3;
+        
+        .task-card {
+            background: white;
+            border-left: 4px solid #3498db;
             padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .task-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .task-card.completed {
+            border-left-color: #2ecc71;
+            opacity: 0.8;
+        }
+        
+        .task-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        .task-meta {
+            color: #666;
             margin-bottom: 10px;
-            border-radius: 0 5px 5px 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .task-item.completed {
-            border-left-color: #4CAF50;
-            opacity: 0.7;
-        }
-        .task-actions {
-            margin-top: 10px;
-        }
-        .task-actions button {
-            padding: 5px 10px;
-            margin-right: 5px;
             font-size: 14px;
         }
-        .delete-btn {
-            background-color: #f44336;
+        
+        .task-meta span {
+            margin-right: 15px;
         }
-        .delete-btn:hover {
-            background-color: #d32f2f;
+        
+        .task-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .complete-btn {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .task-meta span {
+                display: block;
+                margin-bottom: 5px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Daftar Tugas Pelajar XF</h1>
+        <h1>📚 Daftar Tugas Pelajar Kelas XF</h1>
         
-        <div class="task-form">
-            <h2>Tambah Tugas Baru</h2>
+        <div id="authMessage" class="auth-message connecting">
+            🔄 Menghubungkan ke database...
+        </div>
+        
+        <div class="task-form" id="taskForm" style="display: none;">
+            <h2>➕ Tambah Tugas Baru</h2>
             <div class="form-group">
                 <label for="taskName">Nama Tugas</label>
-                <input type="text" id="taskName" required>
+                <input type="text" id="taskName" class="form-control" placeholder="Contoh: Tugas Matematika Bab 3" required>
             </div>
             <div class="form-group">
                 <label for="taskSubject">Mata Pelajaran</label>
-                <select id="taskSubject" required>
-                    <option value="">Pilih Pelajaran</option>
+                <select id="taskSubject" class="form-control" required>
+                    <option value="">-- Pilih Pelajaran --</option>
                     <option value="Matematika">Matematika</option>
                     <option value="Fisika">Fisika</option>
                     <option value="Kimia">Kimia</option>
@@ -108,12 +233,18 @@
                     <option value="Bahasa Indonesia">Bahasa Indonesia</option>
                     <option value="Bahasa Inggris">Bahasa Inggris</option>
                     <option value="Sejarah">Sejarah</option>
+                    <option value="Ekonomi">Ekonomi</option>
+                    <option value="Geografi">Geografi</option>
+                    <option value="Sosiologi">Sosiologi</option>
+                    <option value="Seni Budaya">Seni Budaya</option>
+                    <option value="PJOK">PJOK</option>
+                    <option value="BK">Bimbingan Konseling</option>
                 </select>
             </div>
             <div class="form-group">
                 <label for="taskDay">Hari</label>
-                <select id="taskDay" required>
-                    <option value="">Pilih Hari</option>
+                <select id="taskDay" class="form-control" required>
+                    <option value="">-- Pilih Hari --</option>
                     <option value="Senin">Senin</option>
                     <option value="Selasa">Selasa</option>
                     <option value="Rabu">Rabu</option>
@@ -123,16 +254,18 @@
             </div>
             <div class="form-group">
                 <label for="taskDueDate">Deadline</label>
-                <input type="date" id="taskDueDate" required>
+                <input type="date" id="taskDueDate" class="form-control" required>
             </div>
-            <button id="addTaskBtn">Tambah Tugas</button>
-            <p id="errorMessage" style="color:red;"></p>
+            <button id="addTaskBtn" class="btn btn-success">Tambah Tugas</button>
+            <p id="formError" style="color: #e74c3c; margin-top: 10px;"></p>
         </div>
         
         <div class="task-list">
-            <h2>Daftar Tugas</h2>
+            <h2>📋 Daftar Tugas</h2>
             <div id="tasksContainer">
-                <p>Memuat daftar tugas...</p>
+                <div class="empty-state">
+                    <p>Memuat daftar tugas...</p>
+                </div>
             </div>
         </div>
     </div>
@@ -140,15 +273,16 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 
     <script>
-        // Konfigurasi Firebase Anda
+        // 🔥 Konfigurasi Firebase (Ganti dengan milik Anda)
         const firebaseConfig = {
             apiKey: "AIzaSyCXO3ANj3rSKKysHvr0OUGbhIrFzYPUei4",
             authDomain: "tugas-xf.firebaseapp.com",
             databaseURL: "https://tugas-xf-default-rtdb.asia-southeast1.firebasedatabase.app",
             projectId: "tugas-xf",
-            storageBucket: "tugas-xf.firebasestorage.app",
+            storageBucket: "tugas-xf.appspot.com",
             messagingSenderId: "712155078672",
             appId: "1:712155078672:web:c8f78db71bf76172112a95",
             measurementId: "G-NJF8K4NX7N"
@@ -157,25 +291,129 @@
         // Inisialisasi Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-
+        const auth = firebase.auth();
+        
         // Referensi ke database
         const tasksRef = database.ref('tasks');
+        
+        // Elemen UI
+        const authMessage = document.getElementById('authMessage');
+        const taskForm = document.getElementById('taskForm');
+        const tasksContainer = document.getElementById('tasksContainer');
+        const formError = document.getElementById('formError');
+        
+        // Status autentikasi
+        let isAuthenticated = false;
 
-        // Tambah tugas baru
+        // Fungsi untuk menampilkan pesan
+        function showMessage(element, message, type) {
+            element.textContent = message;
+            element.className = `auth-message ${type}`;
+        }
+
+        // Fungsi login anonymous ke Firebase
+        function loginToFirebase() {
+            showMessage(authMessage, "🔄 Sedang menghubungkan ke database...", "connecting");
+            
+            auth.signInAnonymously()
+                .then(() => {
+                    isAuthenticated = true;
+                    showMessage(authMessage, "✅ Terhubung ke database", "connected");
+                    taskForm.style.display = 'block';
+                })
+                .catch(error => {
+                    console.error("Error login:", error);
+                    showMessage(authMessage, `❌ Gagal terhubung: ${error.message}`, "error");
+                });
+        }
+
+        // Format tanggal menjadi lebih mudah dibaca
+        function formatDate(dateString) {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('id-ID', options);
+        }
+
+        // Menampilkan daftar tugas dari Firebase
+        function loadTasks() {
+            tasksRef.on('value', (snapshot) => {
+                const tasks = snapshot.val();
+                
+                if (!tasks) {
+                    tasksContainer.innerHTML = `
+                        <div class="empty-state">
+                            <p>Belum ada tugas. Silakan tambahkan tugas pertama Anda!</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                tasksContainer.innerHTML = '';
+                
+                Object.entries(tasks).forEach(([taskId, task]) => {
+                    const taskElement = document.createElement('div');
+                    taskElement.className = `task-card ${task.completed ? 'completed' : ''}`;
+                    taskElement.innerHTML = `
+                        <div class="task-title">${task.name}</div>
+                        <div class="task-meta">
+                            <span><strong>📚 Pelajaran:</strong> ${task.subject}</span>
+                            <span><strong>📅 Hari:</strong> ${task.day}</span>
+                            <span><strong>⏰ Deadline:</strong> ${formatDate(task.dueDate)}</span>
+                        </div>
+                        <div class="task-actions">
+                            <button class="action-btn complete-btn" data-id="${taskId}">
+                                ${task.completed ? '❌ Batalkan' : '✅ Selesai'}
+                            </button>
+                            <button class="action-btn delete-btn" data-id="${taskId}">🗑️ Hapus</button>
+                        </div>
+                    `;
+                    
+                    tasksContainer.appendChild(taskElement);
+                });
+                
+                // Tambahkan event listener untuk tombol aksi
+                document.querySelectorAll('.complete-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const taskId = e.target.getAttribute('data-id');
+                        tasksRef.child(taskId).update({
+                            completed: !tasks[taskId].completed
+                        });
+                    });
+                });
+                
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const taskId = e.target.getAttribute('data-id');
+                        if (confirm('Apakah Anda yakin ingin menghapus tugas ini?')) {
+                            tasksRef.child(taskId).remove();
+                        }
+                    });
+                });
+                
+            }, (error) => {
+                console.error("Error loading tasks:", error);
+                showMessage(authMessage, `❌ Gagal memuat tugas: ${error.message}`, "error");
+            });
+        }
+
+        // Menambahkan tugas baru
         document.getElementById('addTaskBtn').addEventListener('click', () => {
-            const taskName = document.getElementById('taskName').value;
+            if (!isAuthenticated) {
+                formError.textContent = "Silakan tunggu hingga terhubung ke database";
+                return;
+            }
+            
+            const taskName = document.getElementById('taskName').value.trim();
             const taskSubject = document.getElementById('taskSubject').value;
             const taskDay = document.getElementById('taskDay').value;
             const taskDueDate = document.getElementById('taskDueDate').value;
             
-            // Validasi input
+            // Validasi form
             if (!taskName || !taskSubject || !taskDay || !taskDueDate) {
-                document.getElementById('errorMessage').textContent = 'Harap isi semua field!';
+                formError.textContent = "Harap isi semua kolom!";
                 return;
             }
             
-            // Reset pesan error
-            document.getElementById('errorMessage').textContent = '';
+            formError.textContent = "";
             
             // Buat objek tugas baru
             const newTask = {
@@ -187,7 +425,7 @@
                 createdAt: new Date().toISOString()
             };
             
-            // Push ke Firebase
+            // Tambahkan ke Firebase
             tasksRef.push(newTask)
                 .then(() => {
                     // Reset form setelah berhasil
@@ -197,59 +435,20 @@
                     document.getElementById('taskDueDate').value = '';
                 })
                 .catch((error) => {
-                    document.getElementById('errorMessage').textContent = 'Gagal menambahkan tugas: ' + error.message;
+                    formError.textContent = `Gagal menambahkan tugas: ${error.message}`;
                 });
         });
 
-        // Menampilkan daftar tugas
-        tasksRef.on('value', (snapshot) => {
-            const tasksContainer = document.getElementById('tasksContainer');
-            const tasks = snapshot.val();
-            
-            if (!tasks) {
-                tasksContainer.innerHTML = '<p>Belum ada tugas.</p>';
-                return;
+        // Cek status autentikasi saat pertama kali load
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                isAuthenticated = true;
+                showMessage(authMessage, "✅ Terhubung ke database", "connected");
+                taskForm.style.display = 'block';
+                loadTasks();
+            } else {
+                loginToFirebase();
             }
-            
-            tasksContainer.innerHTML = '';
-            
-            Object.entries(tasks).forEach(([taskId, task]) => {
-                const taskElement = document.createElement('div');
-                taskElement.className = `task-item ${task.completed ? 'completed' : ''}`;
-                taskElement.innerHTML = `
-                    <h3>${task.name}</h3>
-                    <p><strong>Pelajaran:</strong> ${task.subject}</p>
-                    <p><strong>Hari:</strong> ${task.day}</p>
-                    <p><strong>Deadline:</strong> ${new Date(task.dueDate).toLocaleDateString('id-ID')}</p>
-                    <div class="task-actions">
-                        <button class="complete-btn" data-id="${taskId}">
-                            ${task.completed ? 'Batalkan' : 'Selesai'}
-                        </button>
-                        <button class="delete-btn" data-id="${taskId}">Hapus</button>
-                    </div>
-                `;
-                
-                tasksContainer.appendChild(taskElement);
-            });
-            
-            // Tambahkan event listener untuk tombol
-            document.querySelectorAll('.complete-btn').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const taskId = e.target.getAttribute('data-id');
-                    tasksRef.child(taskId).update({
-                        completed: !tasks[taskId].completed
-                    });
-                });
-            });
-            
-            document.querySelectorAll('.delete-btn').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    if (confirm('Apakah Anda yakin ingin menghapus tugas ini?')) {
-                        const taskId = e.target.getAttribute('data-id');
-                        tasksRef.child(taskId).remove();
-                    }
-                });
-            });
         });
     </script>
 </body>
