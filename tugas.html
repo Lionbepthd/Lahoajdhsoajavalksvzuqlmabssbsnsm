@@ -107,6 +107,42 @@
             color: var(--text-color);
             margin-top: 10px;
         }
+
+        /* ==================== UPLOAD GAMBAR STYLES ==================== */
+        .upload-area {
+            border: 2px dashed var(--primary-color);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin: 15px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .upload-area:hover {
+            background: rgba(52, 152, 219, 0.1);
+        }
+        #imagePreview {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        #removeImage {
+            display: none;
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        .task-image {
+            max-width: 100%;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -392,6 +428,18 @@
                 <label>Link</label>
                 <input type="url" id="taskLink" class="form-control" />
             </div>
+            
+            <!-- Tambahkan Upload Gambar -->
+            <div class="form-group">
+                <label>Gambar Tugas (Opsional)</label>
+                <div id="uploadArea" class="upload-area">
+                    <p>📁 Klik atau drop gambar di sini</p>
+                    <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+                    <img id="imagePreview" alt="Preview Gambar">
+                    <button id="removeImage">❌ Hapus</button>
+                </div>
+            </div>
+            
             <button class="btn btn-primary" id="addTaskBtn">Tambah Tugas</button>
         </div>
 
@@ -508,6 +556,51 @@
         const database = firebase.database();
         let isAdmin = false;
 
+        // ==================== FUNGSI UPLOAD GAMBAR KE IMGBB ====================
+        const IMGBB_API_KEY = '33ab9b2c31cf9572fb304099c511b7db'; // Dapatkan di https://api.imgbb.com
+        
+        async function uploadImageToImgBB(file) {
+            const formData = new FormData();
+            formData.append('image', file);
+            
+            try {
+                const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                return data.data.url; // Mengembalikan URL gambar
+            } catch (error) {
+                console.error("Error uploading image:", error);
+                return null;
+            }
+        }
+
+        // ==================== LOGIKA UPLOAD GAMBAR ====================
+        document.getElementById('uploadArea').addEventListener('click', () => {
+            document.getElementById('imageUpload').click();
+        });
+
+        document.getElementById('imageUpload').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    document.getElementById('imagePreview').src = event.target.result;
+                    document.getElementById('imagePreview').style.display = 'block';
+                    document.getElementById('removeImage').style.display = 'inline-block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('removeImage').addEventListener('click', () => {
+            document.getElementById('imagePreview').src = '';
+            document.getElementById('imagePreview').style.display = 'none';
+            document.getElementById('removeImage').style.display = 'none';
+            document.getElementById('imageUpload').value = '';
+        });
+
         // Fungsi Load Tugas
         function loadTasks() {
             showLoading();
@@ -536,6 +629,7 @@
                         </div>
                         ${task.description ? `<div class="task-description">${task.description}</div>` : ''}
                         ${task.link ? `<a href="${task.link}" target="_blank" class="task-link">${task.link}</a>` : ''}
+                        ${task.imageUrl ? `<img src="${task.imageUrl}" class="task-image" alt="Gambar Tugas">` : ''}
                         ${isAdmin ? `
                         <div class="task-actions">
                             <button class="action-btn complete-btn" onclick="toggleTaskComplete('${task.id}')">${task.completed ? '❌ Batalkan' : '✅ Selesai'}</button>
@@ -623,17 +717,29 @@
         });
 
         // Tambah Tugas
-        document.getElementById('addTaskBtn').addEventListener('click', () => {
+        document.getElementById('addTaskBtn').addEventListener('click', async () => {
             const taskName = document.getElementById('taskName').value.trim();
             const subject = document.getElementById('taskSubject').value.trim();
             const day = document.getElementById('taskDay').value.trim();
             const dueDate = document.getElementById('taskDueDate').value;
             const desc = document.getElementById('taskDescription').value.trim();
             const link = document.getElementById('taskLink').value.trim();
+            const fileInput = document.getElementById('imageUpload');
             
             if (!taskName || !subject || !day || !dueDate) return alert('Lengkapi data!');
             
             showLoading();
+            
+            let imageUrl = null;
+            if (fileInput.files[0]) {
+                imageUrl = await uploadImageToImgBB(fileInput.files[0]);
+                if (!imageUrl) {
+                    hideLoading();
+                    alert('Gagal mengupload gambar!');
+                    return;
+                }
+            }
+            
             database.ref('tasks').push({
                 name: taskName,
                 subject, 
@@ -641,17 +747,23 @@
                 dueDate,
                 description: desc,
                 link, 
+                imageUrl,
                 completed: false,
                 createdAt: new Date().toISOString()
             }).then(() => {
                 hideLoading();
                 alert('Tugas ditambahkan!');
+                // Reset form
                 document.getElementById('taskName').value = '';
                 document.getElementById('taskSubject').value = '';
                 document.getElementById('taskDay').value = '';
                 document.getElementById('taskDueDate').value = '';
                 document.getElementById('taskDescription').value = '';
                 document.getElementById('taskLink').value = '';
+                document.getElementById('imagePreview').src = '';
+                document.getElementById('imagePreview').style.display = 'none';
+                document.getElementById('removeImage').style.display = 'none';
+                document.getElementById('imageUpload').value = '';
             }).catch(() => {
                 hideLoading();
                 alert('Gagal menambahkan tugas');
