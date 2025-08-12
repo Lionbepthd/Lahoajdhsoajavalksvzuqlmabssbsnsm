@@ -55,6 +55,41 @@
             background: rgba(255, 255, 255, 0.3);
             animation: float 15s infinite ease-in-out;
         }
+
+        <!-- Floating AI Bubble -->
+<a href="https://web.lionzone.my.id/ai" target="_blank" class="ai-bubble" title="AI Assistant">
+    <span>🤖</span>
+</a>
+
+/* Floating AI Bubble Button */
+.ai-bubble {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #6e8efb, #a777e3);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    z-index: 100;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.ai-bubble:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+}
+
+.ai-bubble span {
+    font-size: 28px;
+}
         
         @keyframes float {
             0%, 100% {
