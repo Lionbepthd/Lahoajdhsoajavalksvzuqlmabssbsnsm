@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SECURE ACCESS TERMINAL</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+        
+        :root {
+            --neon-pink: #ff2a6d;
+            --neon-blue: #05d9e8;
+            --neon-purple: #d300c5;
+            --dark-bg: #0d0221;
+        }
+        
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            background-color: var(--dark-bg);
+            color: var(--neon-blue);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Retro scanlines effect */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.25) 50%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        /* Grid animation */
+        .grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(5, 217, 232, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(5, 217, 232, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: gridScroll 20s linear infinite;
+            z-index: 0;
+        }
+        
+        @keyframes gridScroll {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+        
+        /* Floating binary code animation */
+        .binary-rain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            opacity: 0.3;
+        }
+        
+        .binary-digit {
+            position: absolute;
+            color: var(--neon-blue);
+            font-size: 16px;
+            animation: fall linear infinite;
+            text-shadow: 0 0 5px var(--neon-blue);
+        }
+        
+        @keyframes fall {
+            0% { transform: translateY(-100px); opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+        
+        /* Main terminal container */
+        .terminal {
+            background-color: rgba(13, 2, 33, 0.8);
+            border: 1px solid var(--neon-pink);
+            box-shadow: 
+                0 0 10px var(--neon-pink),
+                0 0 20px var(--neon-pink),
+                inset 0 0 10px var(--neon-pink);
+            padding: 30px;
+            border-radius: 5px;
+            width: 350px;
+            position: relative;
+            z-index: 2;
+            animation: flicker 0.1s infinite alternate;
+        }
+        
+        @keyframes flicker {
+            0% { opacity: 0.95; }
+            100% { opacity: 1; }
+        }
+        
+        .terminal-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--neon-purple);
+            padding-bottom: 10px;
+        }
+        
+        .terminal-title {
+            color: var(--neon-pink);
+            font-size: 1.2em;
+            text-shadow: 0 0 5px var(--neon-pink);
+            letter-spacing: 2px;
+        }
+        
+        .terminal-date {
+            color: var(--neon-blue);
+        }
+        
+        .access-prompt {
+            margin-bottom: 15px;
+            color: var(--neon-blue);
+        }
+        
+        .input-field {
+            background: transparent;
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            padding: 12px;
+            width: 100%;
+            margin-bottom: 20px;
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 2px;
+            box-shadow: 0 0 5px var(--neon-blue);
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 10px var(--neon-pink);
+        }
+        
+        .submit-btn {
+            background: transparent;
+            border: 1px solid var(--neon-purple);
+            color: var(--neon-purple);
+            padding: 12px;
+            width: 100%;
+            cursor: pointer;
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            box-shadow: 0 0 5px var(--neon-purple);
+        }
+        
+        .submit-btn:hover {
+            background: rgba(211, 0, 197, 0.1);
+            box-shadow: 0 0 15px var(--neon-purple);
+        }
+        
+        .error-msg {
+            color: var(--neon-pink);
+            margin-top: 15px;
+            text-align: center;
+            text-shadow: 0 0 5px var(--neon-pink);
+            display: none;
+        }
+        
+        .glitch {
+            position: relative;
+        }
+        
+        .glitch::before, .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.8;
+        }
+        
+        .glitch::before {
+            color: #0ff;
+            z-index: -1;
+            animation: glitch-effect 3s infinite;
+        }
+        
+        .glitch::after {
+            color: #f0f;
+            z-index: -2;
+            animation: glitch-effect 2s infinite reverse;
+        }
+        
+        @keyframes glitch-effect {
+            0% { transform: translate(0); }
+            20% { transform: translate(-3px, 3px); }
+            40% { transform: translate(-3px, -3px); }
+            60% { transform: translate(3px, 3px); }
+            80% { transform: translate(3px, -3px); }
+            100% { transform: translate(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="scanlines"></div>
+    <div class="grid"></div>
+    <div class="binary-rain" id="binaryRain"></div>
+    
+    <div class="terminal">
+        <div class="terminal-header">
+            <div class="terminal-title">SECURE ACCESS</div>
+            <div class="terminal-date" id="currentDate"></div>
+        </div>
+        
+        <div class="access-prompt">
+            > ENTER AUTHORIZATION CODE<br>
+            > 4-DIGIT REQUIRED
+        </div>
+        
+        <input type="password" class="input-field" id="codeInput" placeholder="••••" maxlength="4">
+        
+        <button class="submit-btn" onclick="checkCode()">AUTHENTICATE</button>
+        
+        <div class="error-msg" id="errorMsg">
+            > ACCESS DENIED <
+        </div>
+    </div>
+
+    <script>
+        // Set current date in retro format
+        const now = new Date();
+        const dateStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear().toString().slice(-2)}`;
+        document.getElementById('currentDate').textContent = dateStr;
+        
+        // Create binary rain effect
+        const binaryRain = document.getElementById('binaryRain');
+        const binaryChars = ['0', '1'];
+        
+        function createBinaryDigit() {
+            const digit = document.createElement('div');
+            digit.className = 'binary-digit';
+            digit.textContent = binaryChars[Math.floor(Math.random() * binaryChars.length)];
+            digit.style.left = `${Math.random() * 100}%`;
+            digit.style.animationDuration = `${5 + Math.random() * 10}s`;
+            digit.style.animationDelay = `${Math.random() * 5}s`;
+            binaryRain.appendChild(digit);
+            
+            // Remove digit after animation completes
+            setTimeout(() => {
+                digit.remove();
+            }, parseFloat(digit.style.animationDuration) * 1000);
+        }
+        
+        // Generate initial binary digits
+        for (let i = 0; i < 50; i++) {
+            setTimeout(createBinaryDigit, i * 200);
+        }
+        
+        // Continue generating binary digits
+        setInterval(createBinaryDigit, 200);
+        
+        // Check access code
+        function checkCode() {
+            const codeInput = document.getElementById('codeInput').value;
+            const errorMsg = document.getElementById('errorMsg');
+            
+            // Valid codes (not shown to user)
+            const validCodes = {
+                '1910': 'https://web.lionzone.my.id/web',
+                '1020': 'https://web.lionzone.my.id/tugas',
+                '0101': 'https://web.lionzone.my.id/ai'
+            };
+            
+            if (validCodes[codeInput]) {
+                // Terminal glitch effect before redirect
+                document.querySelector('.terminal').classList.add('glitch');
+                document.querySelector('.terminal').setAttribute('data-text', '> ACCESS GRANTED <');
+                document.querySelector('.access-prompt').textContent = '> VERIFYING CREDENTIALS...';
+                
+                setTimeout(() => {
+                    window.location.href = validCodes[codeInput];
+                }, 1500);
+            } else {
+                errorMsg.style.display = 'block';
+                document.getElementById('codeInput').value = '';
+                
+                // Shake effect
+                document.querySelector('.terminal').style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    document.querySelector('.terminal').style.animation = '';
+                }, 500);
+            }
+        }
+        
+        // Allow Enter key to submit
+        document.getElementById('codeInput').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                checkCode();
+            }
+        });
+        
+        // Auto-focus input
+        window.onload = function() {
+            document.getElementById('codeInput').focus();
+        };
+        
+        // Add shake animation dynamically
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                20%, 40%, 60%, 80% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
