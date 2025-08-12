@@ -6,6 +6,7 @@
     <title>Daftar Tugas Pelajar (Firebase)</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
     <style>
+        /* ==================== PART 1: VARIABLES & BASE STYLES ==================== */
         :root {
             --primary-color: #3498db;
             --secondary-color: #2ecc71;
@@ -18,217 +19,110 @@
             --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             --border-radius: 12px;
         }
+        
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
+        
         body {
             font-family: 'Poppins', sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0;
             background-color: var(--light-gray);
             color: var(--text-color);
             line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
         }
-        .container {
-            max-width: 100%;
-            margin: 0 auto;
-            background: var(--white);
-            padding: 20px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-        }
-        h1,
-        h2,
-        h3 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-        }
-        h1 {
-            text-align: center;
-            font-size: 1.8rem;
-            margin-bottom: 25px;
-        }
-        .btn {
-            background: var(--secondary-color);
-            color: var(--white);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: background 0.3s;
-            font-size: 1rem;
+        
+        /* Animated Background */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            margin-top: 5px;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            overflow: hidden;
         }
-        .btn-primary {
-            background: var(--primary-color);
+        
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            animation: float 15s infinite ease-in-out;
         }
-        .hidden {
-            display: none;
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+            }
+            25% {
+                transform: translateY(-20px) translateX(10px);
+            }
+            50% {
+                transform: translateY(0) translateX(20px);
+            }
+            75% {
+                transform: translateY(20px) translateX(10px);
+            }
         }
-        .logout-btn {
-            background: var(--danger-color);
-            color: var(--white);
-            width: auto;
-            padding: 6px 12px;
-            font-size: 0.9rem;
-            border-radius: 5px;
-            float: right;
-            margin-bottom: 10px;
-            cursor: pointer;
-        }
-        /* Jadwal Pelajaran */
-        .schedule {
-            margin-top: 30px;
-        }
-        .schedule-container {
-            overflow-x: auto;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            border-radius: var(--border-radius);
-        }
-        .schedule-table {
+        
+        /* Loading System */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            min-width: 600px;
-            border-collapse: collapse;
-            background: var(--white);
-        }
-        .schedule-table th,
-        .schedule-table td {
-            border: 1px solid var(--medium-gray);
-            padding: 12px 8px;
-            text-align: center;
-            font-weight: 500;
-        }
-        .schedule-table th {
-            background: var(--primary-color);
-            color: var(--white);
-        }
-        .schedule-table tr:nth-child(even) {
-            background: #f8f9fa;
-        }
-        /* Task List */
-        .task-list {
-            margin-top: 25px;
-        }
-        .task-card {
-            background: var(--white);
-            border-left: 4px solid var(--primary-color);
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 0 8px 8px 0;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-        }
-        .task-card.completed {
-            border-left-color: var(--secondary-color);
-            opacity: 0.8;
-        }
-        .task-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 5px;
-            word-break: break-word;
-        }
-        .task-meta {
-            color: var(--dark-gray);
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-        }
-        .task-meta span {
-            display: inline-block;
-            margin-right: 10px;
-        }
-        .task-description {
-            margin-bottom: 10px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 5px;
-            font-size: 0.95rem;
-            word-break: break-word;
-        }
-        .task-link {
-            display: inline-block;
-            margin-bottom: 10px;
-            color: var(--primary-color);
-            text-decoration: none;
-            word-break: break-all;
-            font-size: 0.9rem;
-        }
-        .task-link:hover {
-            text-decoration: underline;
-        }
-        .task-actions {
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
             display: flex;
-            gap: 10px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-size: 1.2rem;
+            color: var(--text-color);
             margin-top: 10px;
-        }
-        .action-btn {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 0.9rem;
-            flex: 1;
-            transition: opacity 0.3s;
-        }
-        .action-btn:hover {
-            opacity: 0.9;
-        }
-        .complete-btn {
-            background: var(--secondary-color);
-            color: var(--white);
-        }
-        .delete-btn {
-            background: var(--danger-color);
-            color: var(--white);
-        }
-        /* Responsive */
-        @media (max-width: 768px) {
-            body {
-                padding: 15px;
-            }
-            h1 {
-                font-size: 1.5rem;
-            }
-            .task-card {
-                padding: 10px;
-            }
-            .schedule-table th,
-            .schedule-table td {
-                padding: 8px 5px;
-                font-size: 0.85rem;
-            }
-            .task-meta span {
-                display: block;
-                margin-right: 0;
-                margin-bottom: 5px;
-            }
-            .task-actions {
-                flex-direction: column;
-                gap: 5px;
-            }
-        }
-        @media (max-width: 480px) {
-            body {
-                padding: 10px;
-            }
-            .container {
-                padding: 12px;
-            }
-            .schedule-table {
-                min-width: 100%;
-            }
         }
     </style>
 </head>
 <body>
+    <!-- ==================== PART 2: BACKGROUND & LOADING ==================== -->
+    <div class="background" id="background"></div>
+    
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Memuat Halaman</div>
+    </div>
+
     <div class="container">
         <h1>📚 Daftar Tugas Pelajar</h1>
         <!-- Tombol Logout -->
         <button id="logoutBtn" class="logout-btn hidden">🚪 Logout</button>
+        
         <!-- Admin Login (Firebase Auth) -->
         <div class="admin-panel" id="adminPanel">
             <h3>🔒 Login Admin</h3>
@@ -240,6 +134,237 @@
             </div>
             <button class="btn btn-primary" id="loginBtn">Login</button>
         </div>
+        
+        <!-- ==================== PART 3: MAIN CONTENT ==================== -->
+        <style>
+            .container {
+                max-width: 100%;
+                margin: 20px auto;
+                background: var(--white);
+                padding: 20px;
+                border-radius: var(--border-radius);
+                box-shadow: var(--shadow);
+                position: relative;
+                z-index: 1;
+            }
+            
+            h1, h2, h3 {
+                color: #2c3e50;
+                margin-bottom: 15px;
+            }
+            
+            h1 {
+                text-align: center;
+                font-size: 1.8rem;
+                margin-bottom: 25px;
+            }
+            
+            .btn {
+                background: var(--secondary-color);
+                color: var(--white);
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-weight: 500;
+                transition: background 0.3s;
+                font-size: 1rem;
+                width: 100%;
+                margin-top: 5px;
+            }
+            
+            .btn-primary {
+                background: var(--primary-color);
+            }
+            
+            .hidden {
+                display: none;
+            }
+            
+            .logout-btn {
+                background: var(--danger-color);
+                color: var(--white);
+                width: auto;
+                padding: 6px 12px;
+                font-size: 0.9rem;
+                border-radius: 5px;
+                float: right;
+                margin-bottom: 10px;
+                cursor: pointer;
+            }
+            
+            /* Jadwal Pelajaran */
+            .schedule {
+                margin-top: 30px;
+            }
+            
+            .schedule-container {
+                overflow-x: auto;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                border-radius: var(--border-radius);
+            }
+            
+            .schedule-table {
+                width: 100%;
+                min-width: 600px;
+                border-collapse: collapse;
+                background: var(--white);
+            }
+            
+            .schedule-table th,
+            .schedule-table td {
+                border: 1px solid var(--medium-gray);
+                padding: 12px 8px;
+                text-align: center;
+                font-weight: 500;
+            }
+            
+            .schedule-table th {
+                background: var(--primary-color);
+                color: var(--white);
+            }
+            
+            .schedule-table tr:nth-child(even) {
+                background: #f8f9fa;
+            }
+            
+            /* Task List */
+            .task-list {
+                margin-top: 25px;
+            }
+            
+            .task-card {
+                background: var(--white);
+                border-left: 4px solid var(--primary-color);
+                padding: 15px;
+                margin-bottom: 15px;
+                border-radius: 0 8px 8px 0;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            }
+            
+            .task-card.completed {
+                border-left-color: var(--secondary-color);
+                opacity: 0.8;
+            }
+            
+            .task-title {
+                font-size: 1.1rem;
+                font-weight: 600;
+                margin-bottom: 5px;
+                word-break: break-word;
+            }
+            
+            .task-meta {
+                color: var(--dark-gray);
+                margin-bottom: 10px;
+                font-size: 0.9rem;
+            }
+            
+            .task-meta span {
+                display: inline-block;
+                margin-right: 10px;
+            }
+            
+            .task-description {
+                margin-bottom: 10px;
+                padding: 10px;
+                background: #f8f9fa;
+                border-radius: 5px;
+                font-size: 0.95rem;
+                word-break: break-word;
+            }
+            
+            .task-link {
+                display: inline-block;
+                margin-bottom: 10px;
+                color: var(--primary-color);
+                text-decoration: none;
+                word-break: break-all;
+                font-size: 0.9rem;
+            }
+            
+            .task-link:hover {
+                text-decoration: underline;
+            }
+            
+            .task-actions {
+                display: flex;
+                gap: 10px;
+                margin-top: 10px;
+            }
+            
+            .action-btn {
+                padding: 8px 12px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-weight: 500;
+                font-size: 0.9rem;
+                flex: 1;
+                transition: opacity 0.3s;
+            }
+            
+            .action-btn:hover {
+                opacity: 0.9;
+            }
+            
+            .complete-btn {
+                background: var(--secondary-color);
+                color: var(--white);
+            }
+            
+            .delete-btn {
+                background: var(--danger-color);
+                color: var(--white);
+            }
+            
+            /* Responsive */
+            @media (max-width: 768px) {
+                body {
+                    padding: 15px;
+                }
+                
+                h1 {
+                    font-size: 1.5rem;
+                }
+                
+                .task-card {
+                    padding: 10px;
+                }
+                
+                .schedule-table th,
+                .schedule-table td {
+                    padding: 8px 5px;
+                    font-size: 0.85rem;
+                }
+                
+                .task-meta span {
+                    display: block;
+                    margin-right: 0;
+                    margin-bottom: 5px;
+                }
+                
+                .task-actions {
+                    flex-direction: column;
+                    gap: 5px;
+                }
+            }
+            
+            @media (max-width: 480px) {
+                body {
+                    padding: 10px;
+                }
+                
+                .container {
+                    padding: 12px;
+                }
+                
+                .schedule-table {
+                    min-width: 100%;
+                }
+            }
+        </style>
+
         <!-- Form Tambah Tugas (Hanya muncul setelah login) -->
         <div class="task-form hidden" id="taskForm">
             <h2>➕ Tambah Tugas Baru</h2>
@@ -269,7 +394,8 @@
             </div>
             <button class="btn btn-primary" id="addTaskBtn">Tambah Tugas</button>
         </div>
-<!-- Jadwal Pelajaran -->
+
+        <!-- Jadwal Pelajaran -->
         <div class="schedule">
             <h2>📅 Jadwal Pelajaran</h2>
             <div class="schedule-container">
@@ -339,7 +465,35 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 
     <script>
-        // Firebase Config
+        // ==================== PART 4: JAVASCRIPT FUNCTIONALITY ====================
+        
+        // Create animated background bubbles
+        function createBubbles() {
+            const background = document.getElementById('background');
+            const bubbleCount = 15;
+            
+            for (let i = 0; i < bubbleCount; i++) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                
+                // Random size between 50px and 200px
+                const size = Math.random() * 150 + 50;
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+                
+                // Random position
+                bubble.style.left = `${Math.random() * 100}%`;
+                bubble.style.top = `${Math.random() * 100}%`;
+                
+                // Random animation duration and delay
+                bubble.style.animationDuration = `${Math.random() * 20 + 10}s`;
+                bubble.style.animationDelay = `${Math.random() * 5}s`;
+                
+                background.appendChild(bubble);
+            }
+        }
+        
+        // Initialize Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyCXO3ANj3rSKKysHvr0OUGbhIrFzYPUei4",
             authDomain: "tugas-xf.firebaseapp.com",
@@ -349,22 +503,27 @@
             messagingSenderId: "712155078672",
             appId: "1:712155078672:web:c8f78db71bf76172112a95"
         };
+        
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         let isAdmin = false;
 
         // Fungsi Load Tugas
         function loadTasks() {
+            showLoading();
             database.ref('tasks').on('value', (snapshot) => {
                 const tasks = snapshot.val();
                 const container = document.getElementById('tasksContainer');
                 if (!tasks) {
                     container.innerHTML = '<p>Belum ada tugas.</p>';
+                    hideLoading();
                     return;
                 }
+                
                 const tasksArray = Object.entries(tasks).map(([id, task]) => ({ id, ...task }));
                 tasksArray.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
                 container.innerHTML = '';
+                
                 tasksArray.forEach(task => {
                     const div = document.createElement('div');
                     div.className = `task-card ${task.completed ? 'completed' : ''}`;
@@ -385,20 +544,44 @@
                     `;
                     container.appendChild(div);
                 });
+                
+                hideLoading();
+            }, (error) => {
+                console.error("Error loading tasks:", error);
+                hideLoading();
             });
         }
 
         function toggleTaskComplete(id) {
+            showLoading();
             database.ref('tasks/' + id).once('value', snap => {
                 const task = snap.val();
-                database.ref('tasks/' + id).update({ completed: !task.completed });
+                database.ref('tasks/' + id).update({ completed: !task.completed })
+                    .then(() => hideLoading())
+                    .catch(() => hideLoading());
             });
         }
 
         function deleteTask(id) {
             if (confirm('Hapus tugas ini?')) {
-                database.ref('tasks/' + id).remove();
+                showLoading();
+                database.ref('tasks/' + id).remove()
+                    .then(() => hideLoading())
+                    .catch(() => hideLoading());
             }
+        }
+
+        // Loading functions
+        function showLoading() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+        
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').style.display = 'none';
+                document.getElementById('loadingOverlay').style.opacity = '1';
+            }, 500);
         }
 
         // Login Admin
@@ -406,14 +589,21 @@
             const email = document.getElementById('adminEmail').value.trim();
             const pass = document.getElementById('adminPassword').value.trim();
             if (!email || !pass) return alert('Isi email dan password!');
+            
+            showLoading();
             firebase.auth().signInWithEmailAndPassword(email, pass)
-                .then(() => { /* Login berhasil */ })
-                .catch(err => alert('Login gagal: ' + err.message));
+                .then(() => hideLoading())
+                .catch(err => {
+                    hideLoading();
+                    alert('Login gagal: ' + err.message);
+                });
         });
 
         // Logout Admin
         document.getElementById('logoutBtn').addEventListener('click', () => {
-            firebase.auth().signOut();
+            showLoading();
+            firebase.auth().signOut()
+                .then(() => hideLoading());
         });
 
         // Cek status login
@@ -440,25 +630,43 @@
             const dueDate = document.getElementById('taskDueDate').value;
             const desc = document.getElementById('taskDescription').value.trim();
             const link = document.getElementById('taskLink').value.trim();
+            
             if (!taskName || !subject || !day || !dueDate) return alert('Lengkapi data!');
+            
+            showLoading();
             database.ref('tasks').push({
                 name: taskName,
-                subject, day, dueDate,
+                subject, 
+                day, 
+                dueDate,
                 description: desc,
-                link, completed: false,
+                link, 
+                completed: false,
                 createdAt: new Date().toISOString()
+            }).then(() => {
+                hideLoading();
+                alert('Tugas ditambahkan!');
+                document.getElementById('taskName').value = '';
+                document.getElementById('taskSubject').value = '';
+                document.getElementById('taskDay').value = '';
+                document.getElementById('taskDueDate').value = '';
+                document.getElementById('taskDescription').value = '';
+                document.getElementById('taskLink').value = '';
+            }).catch(() => {
+                hideLoading();
+                alert('Gagal menambahkan tugas');
             });
-            alert('Tugas ditambahkan!');
-            document.getElementById('taskName').value = '';
-            document.getElementById('taskSubject').value = '';
-            document.getElementById('taskDay').value = '';
-            document.getElementById('taskDueDate').value = '';
-            document.getElementById('taskDescription').value = '';
-            document.getElementById('taskLink').value = '';
         });
 
-        // Set default tanggal deadline ke hari ini
-        document.getElementById('taskDueDate').valueAsDate = new Date();
+        // Initialize
+        window.addEventListener('DOMContentLoaded', () => {
+            createBubbles();
+            // Set default tanggal deadline ke hari ini
+            document.getElementById('taskDueDate').valueAsDate = new Date();
+            
+            // Simulasikan loading awal
+            setTimeout(hideLoading, 1500);
+        });
     </script>
 </body>
 </html>
