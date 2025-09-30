@@ -11,6 +11,7 @@
             --primary-color: #3498db;
             --secondary-color: #2ecc71;
             --danger-color: #e74c3c;
+            --warning-color: #f39c12;
             --text-color: #333;
             --light-gray: #f0f2f5;
             --medium-gray: #e0e0e0;
@@ -189,8 +190,48 @@
         <!-- Tombol Logout -->
         <button id="logoutBtn" class="logout-btn hidden">🚪 Logout</button>
         
+        <!-- User Auth (Firebase Auth) -->
+        <div class="auth-panel" id="authPanel">
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="loginTab">Login</button>
+                <button class="auth-tab" id="registerTab">Register</button>
+            </div>
+            
+            <!-- Login Form -->
+            <div class="auth-form" id="loginForm">
+                <h3>🔒 Login</h3>
+                <div class="form-group">
+                    <input type="email" id="userEmail" placeholder="Masukkan Email" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <input type="password" id="userPassword" placeholder="Masukkan Password" class="form-control" />
+                </div>
+                <button class="btn btn-primary" id="userLoginBtn">Login</button>
+                <p class="auth-switch">Admin? <a href="#" id="showAdminLogin">Login sebagai Admin</a></p>
+            </div>
+            
+            <!-- Register Form -->
+            <div class="auth-form hidden" id="registerForm">
+                <h3>📝 Register</h3>
+                <div class="form-group">
+                    <input type="text" id="userName" placeholder="Nama Lengkap" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <input type="email" id="userRegEmail" placeholder="Masukkan Email" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <input type="password" id="userRegPassword" placeholder="Masukkan Password" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <input type="password" id="userConfirmPassword" placeholder="Konfirmasi Password" class="form-control" />
+                </div>
+                <button class="btn btn-primary" id="userRegisterBtn">Register</button>
+                <p class="auth-switch">Sudah punya akun? <a href="#" id="showUserLogin">Login</a></p>
+            </div>
+        </div>
+        
         <!-- Admin Login (Firebase Auth) -->
-        <div class="admin-panel" id="adminPanel">
+        <div class="admin-panel hidden" id="adminPanel">
             <h3>🔒 Login Admin</h3>
             <div class="form-group">
                 <input type="email" id="adminEmail" placeholder="Masukkan Email Admin" class="form-control" />
@@ -199,6 +240,7 @@
                 <input type="password" id="adminPassword" placeholder="Masukkan Password Admin" class="form-control" />
             </div>
             <button class="btn btn-primary" id="loginBtn">Login</button>
+            <p class="auth-switch">Pengguna biasa? <a href="#" id="showUserAuth">Login sebagai Pengguna</a></p>
         </div>
         
         <!-- ==================== PART 3: MAIN CONTENT ==================== -->
@@ -243,6 +285,10 @@
                 background: var(--primary-color);
             }
             
+            .btn-warning {
+                background: var(--warning-color);
+            }
+            
             .hidden {
                 display: none;
             }
@@ -257,6 +303,44 @@
                 float: right;
                 margin-bottom: 10px;
                 cursor: pointer;
+            }
+            
+            /* Auth Panel Styles */
+            .auth-tabs {
+                display: flex;
+                margin-bottom: 15px;
+                border-bottom: 1px solid var(--medium-gray);
+            }
+            
+            .auth-tab {
+                flex: 1;
+                padding: 10px;
+                background: none;
+                border: none;
+                cursor: pointer;
+                font-weight: 500;
+                transition: all 0.3s;
+                border-bottom: 2px solid transparent;
+            }
+            
+            .auth-tab.active {
+                border-bottom: 2px solid var(--primary-color);
+                color: var(--primary-color);
+            }
+            
+            .auth-switch {
+                text-align: center;
+                margin-top: 15px;
+                font-size: 0.9rem;
+            }
+            
+            .auth-switch a {
+                color: var(--primary-color);
+                text-decoration: none;
+            }
+            
+            .auth-switch a:hover {
+                text-decoration: underline;
             }
             
             /* Jadwal Pelajaran */
@@ -384,6 +468,71 @@
                 color: var(--white);
             }
             
+            /* Komentar Styles */
+            .comments-section {
+                margin-top: 15px;
+                border-top: 1px solid var(--medium-gray);
+                padding-top: 15px;
+            }
+            
+            .comments-title {
+                font-size: 1rem;
+                margin-bottom: 10px;
+                color: var(--dark-gray);
+            }
+            
+            .comment-form {
+                display: flex;
+                margin-bottom: 15px;
+            }
+            
+            .comment-input {
+                flex: 1;
+                padding: 8px 12px;
+                border: 1px solid var(--medium-gray);
+                border-radius: 20px;
+                font-size: 0.9rem;
+                outline: none;
+            }
+            
+            .comment-submit {
+                background: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 20px;
+                padding: 8px 15px;
+                margin-left: 10px;
+                cursor: pointer;
+                font-size: 0.9rem;
+            }
+            
+            .comments-list {
+                max-height: 200px;
+                overflow-y: auto;
+            }
+            
+            .comment-item {
+                padding: 8px 0;
+                border-bottom: 1px solid #f0f0f0;
+            }
+            
+            .comment-author {
+                font-weight: 600;
+                font-size: 0.85rem;
+                margin-bottom: 3px;
+            }
+            
+            .comment-text {
+                font-size: 0.9rem;
+                word-break: break-word;
+            }
+            
+            .comment-time {
+                font-size: 0.75rem;
+                color: var(--dark-gray);
+                margin-top: 3px;
+            }
+            
             /* Responsive */
             @media (max-width: 768px) {
                 body {
@@ -413,6 +562,15 @@
                 .task-actions {
                     flex-direction: column;
                     gap: 5px;
+                }
+                
+                .comment-form {
+                    flex-direction: column;
+                }
+                
+                .comment-submit {
+                    margin-left: 0;
+                    margin-top: 10px;
                 }
 
                 .ai-bubble {
@@ -445,7 +603,7 @@
             }
         </style>
 
-        <!-- Form Tambah Tugas (Hanya muncul setelah login) -->
+        <!-- Form Tambah Tugas (Hanya muncul setelah login admin) -->
         <div class="task-form hidden" id="taskForm">
             <h2>➕ Tambah Tugas Baru</h2>
             <div class="form-group">
@@ -603,6 +761,9 @@
         
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
+        const auth = firebase.auth();
+        
+        let currentUser = null;
         let isAdmin = false;
 
         // ==================== FUNGSI UPLOAD GAMBAR KE IMGBB ====================
@@ -669,6 +830,45 @@
                 tasksArray.forEach(task => {
                     const div = document.createElement('div');
                     div.className = `task-card ${task.completed ? 'completed' : ''}`;
+                    
+                    // Load komentar untuk tugas ini
+                    let commentsHtml = '';
+                    if (task.comments) {
+                        const commentsArray = Object.entries(task.comments).map(([id, comment]) => ({ id, ...comment }));
+                        commentsArray.sort((a, b) => a.timestamp - b.timestamp);
+                        
+                        commentsHtml = `
+                            <div class="comments-section">
+                                <div class="comments-title">💬 Komentar (${commentsArray.length})</div>
+                                <div class="comments-list">
+                                    ${commentsArray.map(comment => `
+                                        <div class="comment-item">
+                                            <div class="comment-author">${comment.authorName}</div>
+                                            <div class="comment-text">${comment.text}</div>
+                                            <div class="comment-time">${formatTime(comment.timestamp)}</div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                ${currentUser ? `
+                                <div class="comment-form">
+                                    <input type="text" class="comment-input" placeholder="Tulis komentar..." id="commentInput-${task.id}">
+                                    <button class="comment-submit" onclick="addComment('${task.id}')">Kirim</button>
+                                </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    } else {
+                        commentsHtml = currentUser ? `
+                            <div class="comments-section">
+                                <div class="comments-title">💬 Komentar (0)</div>
+                                <div class="comment-form">
+                                    <input type="text" class="comment-input" placeholder="Tulis komentar..." id="commentInput-${task.id}">
+                                    <button class="comment-submit" onclick="addComment('${task.id}')">Kirim</button>
+                                </div>
+                            </div>
+                        ` : '';
+                    }
+                    
                     div.innerHTML = `
                         <div class="task-title">${task.name}</div>
                         <div class="task-meta">
@@ -679,6 +879,7 @@
                         ${task.description ? `<div class="task-description">${task.description}</div>` : ''}
                         ${task.link ? `<a href="${task.link}" target="_blank" class="task-link">${task.link}</a>` : ''}
                         ${task.imageUrl ? `<img src="${task.imageUrl}" class="task-image" alt="Gambar Tugas">` : ''}
+                        ${commentsHtml}
                         ${isAdmin ? `
                         <div class="task-actions">
                             <button class="action-btn complete-btn" onclick="toggleTaskComplete('${task.id}')">${task.completed ? '❌ Batalkan' : '✅ Selesai'}</button>
@@ -693,6 +894,36 @@
                 console.error("Error loading tasks:", error);
                 hideLoading();
             });
+        }
+
+        // Fungsi untuk menambah komentar
+        function addComment(taskId) {
+            const commentInput = document.getElementById(`commentInput-${taskId}`);
+            const commentText = commentInput.value.trim();
+            
+            if (!commentText) return;
+            
+            const commentData = {
+                text: commentText,
+                authorId: currentUser.uid,
+                authorName: currentUser.displayName || currentUser.email,
+                timestamp: Date.now()
+            };
+            
+            database.ref(`tasks/${taskId}/comments`).push(commentData)
+                .then(() => {
+                    commentInput.value = '';
+                })
+                .catch(error => {
+                    console.error("Error adding comment:", error);
+                    alert('Gagal menambahkan komentar');
+                });
+        }
+
+        // Format waktu untuk komentar
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleDateString('id-ID') + ' ' + date.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
         }
 
         function toggleTaskComplete(id) {
@@ -727,46 +958,185 @@
             }, 500);
         }
 
+        // ==================== AUTHENTICATION FUNCTIONS ====================
+        
+        // Login User
+        document.getElementById('userLoginBtn').addEventListener('click', () => {
+            const email = document.getElementById('userEmail').value.trim();
+            const password = document.getElementById('userPassword').value.trim();
+            
+            if (!email || !password) {
+                alert('Harap isi email dan password!');
+                return;
+            }
+            
+            showLoading();
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    currentUser = userCredential.user;
+                    hideLoading();
+                    updateUIAfterAuth();
+                })
+                .catch((error) => {
+                    hideLoading();
+                    alert('Login gagal: ' + error.message);
+                });
+        });
+        
+        // Register User
+        document.getElementById('userRegisterBtn').addEventListener('click', () => {
+            const name = document.getElementById('userName').value.trim();
+            const email = document.getElementById('userRegEmail').value.trim();
+            const password = document.getElementById('userRegPassword').value.trim();
+            const confirmPassword = document.getElementById('userConfirmPassword').value.trim();
+            
+            if (!name || !email || !password || !confirmPassword) {
+                alert('Harap lengkapi semua field!');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                alert('Password dan konfirmasi password tidak cocok!');
+                return;
+            }
+            
+            if (password.length < 6) {
+                alert('Password harus minimal 6 karakter!');
+                return;
+            }
+            
+            showLoading();
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Update profile dengan nama
+                    return userCredential.user.updateProfile({
+                        displayName: name
+                    });
+                })
+                .then(() => {
+                    hideLoading();
+                    alert('Registrasi berhasil! Silakan login.');
+                    switchToLogin();
+                })
+                .catch((error) => {
+                    hideLoading();
+                    alert('Registrasi gagal: ' + error.message);
+                });
+        });
+        
         // Login Admin
         document.getElementById('loginBtn').addEventListener('click', () => {
             const email = document.getElementById('adminEmail').value.trim();
-            const pass = document.getElementById('adminPassword').value.trim();
-            if (!email || !pass) return alert('Isi email dan password!');
+            const password = document.getElementById('adminPassword').value.trim();
+            if (!email || !password) return alert('Isi email dan password!');
             
             showLoading();
-            firebase.auth().signInWithEmailAndPassword(email, pass)
-                .then(() => hideLoading())
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    currentUser = userCredential.user;
+                    isAdmin = true;
+                    hideLoading();
+                    updateUIAfterAuth();
+                })
                 .catch(err => {
                     hideLoading();
                     alert('Login gagal: ' + err.message);
                 });
         });
 
-        // Logout Admin
+        // Logout
         document.getElementById('logoutBtn').addEventListener('click', () => {
             showLoading();
-            firebase.auth().signOut()
-                .then(() => hideLoading());
+            auth.signOut()
+                .then(() => {
+                    hideLoading();
+                    currentUser = null;
+                    isAdmin = false;
+                    updateUIAfterAuth();
+                });
         });
 
-        // Cek status login
-        firebase.auth().onAuthStateChanged(user => {
-            if (user) {
-                isAdmin = true;
+        // Switch antara login dan register
+        document.getElementById('loginTab').addEventListener('click', () => {
+            switchToLogin();
+        });
+        
+        document.getElementById('registerTab').addEventListener('click', () => {
+            switchToRegister();
+        });
+        
+        document.getElementById('showUserLogin').addEventListener('click', (e) => {
+            e.preventDefault();
+            switchToLogin();
+        });
+        
+        document.getElementById('showAdminLogin').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('authPanel').classList.add('hidden');
+            document.getElementById('adminPanel').classList.remove('hidden');
+        });
+        
+        document.getElementById('showUserAuth').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('adminPanel').classList.add('hidden');
+            document.getElementById('authPanel').classList.remove('hidden');
+        });
+        
+        function switchToLogin() {
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('registerForm').classList.add('hidden');
+            document.getElementById('loginTab').classList.add('active');
+            document.getElementById('registerTab').classList.remove('active');
+        }
+        
+        function switchToRegister() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('registerForm').classList.remove('hidden');
+            document.getElementById('loginTab').classList.remove('active');
+            document.getElementById('registerTab').classList.add('active');
+        }
+        
+        // Update UI setelah autentikasi
+        function updateUIAfterAuth() {
+            if (currentUser) {
+                document.getElementById('authPanel').classList.add('hidden');
                 document.getElementById('adminPanel').classList.add('hidden');
-                document.getElementById('taskForm').classList.remove('hidden');
                 document.getElementById('logoutBtn').classList.remove('hidden');
+                
+                if (isAdmin) {
+                    document.getElementById('taskForm').classList.remove('hidden');
+                }
             } else {
-                isAdmin = false;
-                document.getElementById('adminPanel').classList.remove('hidden');
+                document.getElementById('authPanel').classList.remove('hidden');
                 document.getElementById('taskForm').classList.add('hidden');
                 document.getElementById('logoutBtn').classList.add('hidden');
             }
+            
             loadTasks();
+        }
+
+        // Cek status login saat halaman dimuat
+        auth.onAuthStateChanged(user => {
+            currentUser = user;
+            
+            // Untuk keperluan demo, kita anggap admin adalah user dengan email tertentu
+            // Dalam implementasi nyata, gunakan Firebase Admin SDK atau custom claims
+            if (user && user.email === 'admin@tugasxf.com') {
+                isAdmin = true;
+            } else {
+                isAdmin = false;
+            }
+            
+            updateUIAfterAuth();
         });
 
-        // Tambah Tugas
+        // Tambah Tugas (hanya admin)
         document.getElementById('addTaskBtn').addEventListener('click', async () => {
+            if (!isAdmin) {
+                alert('Hanya admin yang dapat menambah tugas!');
+                return;
+            }
+            
             const taskName = document.getElementById('taskName').value.trim();
             const subject = document.getElementById('taskSubject').value.trim();
             const day = document.getElementById('taskDay').value.trim();
