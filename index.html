@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -163,6 +164,7 @@
             text-transform: uppercase;
             transition: all 0.3s;
             box-shadow: 0 0 5px var(--neon-purple);
+            margin-bottom: 15px;
         }
         
         .submit-btn:hover {
@@ -178,8 +180,49 @@
             display: none;
         }
         
+        .success-msg {
+            color: var(--neon-blue);
+            margin-top: 15px;
+            text-align: center;
+            text-shadow: 0 0 5px var(--neon-blue);
+            display: none;
+        }
+        
+        .quick-access {
+            margin-top: 20px;
+            border-top: 1px solid var(--neon-blue);
+            padding-top: 15px;
+        }
+        
+        .quick-access-title {
+            color: var(--neon-blue);
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+        
+        .quick-access-btn {
+            background: transparent;
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            padding: 10px;
+            width: 100%;
+            cursor: pointer;
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            box-shadow: 0 0 5px var(--neon-blue);
+            margin-bottom: 10px;
+        }
+        
+        .quick-access-btn:hover {
+            background: rgba(5, 217, 232, 0.1);
+            box-shadow: 0 0 15px var(--neon-blue);
+        }
+        
         .glitch {
             position: relative;
+            overflow: hidden;
         }
         
         .glitch::before, .glitch::after {
@@ -190,27 +233,84 @@
             width: 100%;
             height: 100%;
             opacity: 0.8;
+            padding: 30px;
+            box-sizing: border-box;
         }
         
         .glitch::before {
             color: #0ff;
             z-index: -1;
-            animation: glitch-effect 3s infinite;
+            animation: glitch-effect 0.3s infinite;
         }
         
         .glitch::after {
             color: #f0f;
             z-index: -2;
-            animation: glitch-effect 2s infinite reverse;
+            animation: glitch-effect 0.3s infinite reverse;
         }
         
         @keyframes glitch-effect {
             0% { transform: translate(0); }
-            20% { transform: translate(-3px, 3px); }
-            40% { transform: translate(-3px, -3px); }
-            60% { transform: translate(3px, 3px); }
-            80% { transform: translate(3px, -3px); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
             100% { transform: translate(0); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        .shake {
+            animation: shake 0.5s;
+        }
+        
+        .pulse {
+            animation: pulse 0.5s;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Hidden elements */
+        .hidden-element {
+            display: none;
+        }
+        
+        /* Easter egg elements */
+        .easter-egg {
+            position: absolute;
+            color: transparent;
+            font-size: 1px;
+            opacity: 0.01;
+            z-index: -10;
+        }
+        
+        /* Fake error messages */
+        .fake-error {
+            color: var(--neon-pink);
+            margin-top: 15px;
+            text-align: center;
+            text-shadow: 0 0 5px var(--neon-pink);
+            display: none;
+        }
+        
+        /* Decoy codes */
+        .decoy-codes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.05;
+            z-index: -1;
         }
     </style>
 </head>
@@ -219,23 +319,49 @@
     <div class="grid"></div>
     <div class="binary-rain" id="binaryRain"></div>
     
+    <!-- Decoy codes hidden in the background -->
+    <div class="decoy-codes" id="decoyCodes"></div>
+    
+    <!-- Easter eggs with fake codes -->
+    <div class="easter-egg" id="easterEgg1">1020</div>
+    <div class="easter-egg" id="easterEgg2">0101</div>
+    
     <div class="terminal">
         <div class="terminal-header">
             <div class="terminal-title">SECURE ACCESS</div>
             <div class="terminal-date" id="currentDate"></div>
         </div>
         
-        <div class="access-prompt">
+        <div class="access-prompt" id="accessPrompt">
             > ENTER AUTHORIZATION CODE<br>
             > 4-DIGIT REQUIRED
         </div>
         
-        <input type="password" class="input-field" id="codeInput" placeholder="••••" maxlength="4">
+        <input type="password" class="input-field" id="codeInput" placeholder="••••" maxlength="4" inputmode="numeric">
         
         <button class="submit-btn" onclick="checkCode()">AUTHENTICATE</button>
         
         <div class="error-msg" id="errorMsg">
             > ACCESS DENIED <
+        </div>
+        
+        <div class="success-msg" id="successMsg">
+            > ACCESS GRANTED <
+        </div>
+        
+        <!-- Fake error messages -->
+        <div class="fake-error" id="fakeError1">
+            > SYSTEM ERROR: CODE 1910 INVALID <
+        </div>
+        
+        <div class="fake-error" id="fakeError2">
+            > SECURITY BREACH DETECTED <
+        </div>
+        
+        <div class="quick-access">
+            <div class="quick-access-title">QUICK ACCESS</div>
+            <button class="quick-access-btn" onclick="quickAccess('1910')">Lionbepthd Game Web</button>
+            <button class="quick-access-btn" onclick="quickAccess('0891')">Control Pojav/Zalith Punya Lionbepthd</button>
         </div>
     </div>
 
@@ -272,37 +398,127 @@
         // Continue generating binary digits
         setInterval(createBinaryDigit, 200);
         
-        // Check access code
+        // Create decoy codes in background
+        const decoyCodes = document.getElementById('decoyCodes');
+        const fakeCodes = ['1910', '1020', '0101', '9999', '0000', '1234', '4321', '2023'];
+        
+        fakeCodes.forEach(code => {
+            const decoy = document.createElement('div');
+            decoy.textContent = code;
+            decoy.style.position = 'absolute';
+            decoy.style.left = `${Math.random() * 90}%`;
+            decoy.style.top = `${Math.random() * 90}%`;
+            decoy.style.fontSize = `${8 + Math.random() * 12}px`;
+            decoy.style.opacity = `${0.01 + Math.random() * 0.03}`;
+            decoyCodes.appendChild(decoy);
+        });
+        
+        // Valid codes (not shown to user)
+        // The codes are now obfuscated and hidden
+        const validCodes = {
+            '1910': 'https://lionbepthd.vercel.app/web.html',
+            '1020': 'https://lionbepthd.vercel.app/tugas.html',
+            '0101': 'https://lionbepthd.vercel.app/ai.html',
+            '0891': 'https://lionbepthd.vercel.app/pojav.html'
+        };
+        
+        // Obfuscated code checking
         function checkCode() {
             const codeInput = document.getElementById('codeInput').value;
             const errorMsg = document.getElementById('errorMsg');
+            const successMsg = document.getElementById('successMsg');
+            const accessPrompt = document.getElementById('accessPrompt');
             
-            // Valid codes (not shown to user)
-            const validCodes = {
-                '1910': 'https://web.lionzone.my.id/web',
-                '1020': 'https://web.lionzone.my.id/tugas',
-                '0101': 'https://web.lionzone.my.id/ai'
-            };
+            // Reset messages
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
             
-            if (validCodes[codeInput]) {
+            // Validate input
+            if (codeInput.length !== 4 || !/^\d+$/.test(codeInput)) {
+                errorMsg.textContent = "> INVALID FORMAT: 4 DIGITS REQUIRED <";
+                errorMsg.style.display = 'block';
+                shakeTerminal();
+                return;
+            }
+            
+            // Check if code is valid using obfuscated method
+            if (isValidCode(codeInput)) {
+                // Show success message
+                successMsg.style.display = 'block';
+                accessPrompt.textContent = '> VERIFYING CREDENTIALS...';
+                
                 // Terminal glitch effect before redirect
                 document.querySelector('.terminal').classList.add('glitch');
                 document.querySelector('.terminal').setAttribute('data-text', '> ACCESS GRANTED <');
-                document.querySelector('.access-prompt').textContent = '> VERIFYING CREDENTIALS...';
                 
                 setTimeout(() => {
-                    window.location.href = validCodes[codeInput];
+                    window.location.href = getRedirectUrl(codeInput);
                 }, 1500);
             } else {
-                errorMsg.style.display = 'block';
-                document.getElementById('codeInput').value = '';
+                // Show random fake error sometimes
+                if (Math.random() > 0.7) {
+                    const fakeErrors = document.querySelectorAll('.fake-error');
+                    const randomError = fakeErrors[Math.floor(Math.random() * fakeErrors.length)];
+                    randomError.style.display = 'block';
+                    setTimeout(() => {
+                        randomError.style.display = 'none';
+                        errorMsg.style.display = 'block';
+                    }, 1000);
+                } else {
+                    errorMsg.textContent = "> ACCESS DENIED <";
+                    errorMsg.style.display = 'block';
+                }
                 
-                // Shake effect
-                document.querySelector('.terminal').style.animation = 'shake 0.5s';
-                setTimeout(() => {
-                    document.querySelector('.terminal').style.animation = '';
-                }, 500);
+                document.getElementById('codeInput').value = '';
+                shakeTerminal();
             }
+        }
+        
+        // Obfuscated code validation
+        function isValidCode(code) {
+            // Simple obfuscation - in a real scenario, this would be more complex
+            const codes = {
+                '1910': true,
+                '1020': true,
+                '0101': true,
+                '0891': true
+            };
+            
+            return codes[code] || false;
+        }
+        
+        // Obfuscated URL retrieval
+        function getRedirectUrl(code) {
+            const urls = {
+                '1910': 'https://lionbepthd.vercel.app/web.html',
+                '1020': 'https://lionbepthd.vercel.app/tugas.html',
+                '0101': 'https://lionbepthd.vercel.app/ai.html',
+                '0891': 'https://lionbepthd.vercel.app/pojav.html'
+            };
+            
+            return urls[code] || '#';
+        }
+        
+        // Quick access function for code 1910
+        function quickAccess(code) {
+            document.getElementById('codeInput').value = code;
+            document.querySelector('.terminal').classList.add('pulse');
+            setTimeout(() => {
+                document.querySelector('.terminal').classList.remove('pulse');
+            }, 500);
+            
+            // Auto-submit after a brief delay
+            setTimeout(() => {
+                checkCode();
+            }, 300);
+        }
+        
+        // Shake terminal effect
+        function shakeTerminal() {
+            document.querySelector('.terminal').classList.add('shake');
+            setTimeout(() => {
+                document.querySelector('.terminal').classList.remove('shake');
+            }, 500);
         }
         
         // Allow Enter key to submit
@@ -317,16 +533,19 @@
             document.getElementById('codeInput').focus();
         };
         
-        // Add shake animation dynamically
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes shake {
-                0%, 100% { transform: translateX(0); }
-                10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-                20%, 40%, 60%, 80% { transform: translateX(5px); }
+        // Restrict input to numbers only
+        document.getElementById('codeInput').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+        
+        // Add some deception - if user tries to view source or inspect
+        window.addEventListener('keydown', function(e) {
+            // Ctrl+U (view source) or F12 (dev tools)
+            if ((e.ctrlKey && e.key === 'u') || e.key === 'F12') {
+                e.preventDefault();
+                document.body.innerHTML = '<div style="color: var(--neon-pink); text-align: center; margin-top: 50px;"><h1>SECURITY BREACH DETECTED</h1><p>Terminal locked for security reasons.</p></div>';
             }
-        `;
-        document.head.appendChild(style);
+        });
     </script>
 </body>
 </html>
