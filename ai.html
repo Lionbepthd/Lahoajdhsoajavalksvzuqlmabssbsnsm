@@ -1,745 +1,379 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asisten Lionzone (Wikipedia source)</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary-light: #3b82f6;
-            --primary-dark: #60a5fa;
-            --bg-light: #f9fafb;
-            --bg-dark: #111827;
-            --text-light: #111827;
-            --text-dark: #f9fafb;
-            --bubble-ai-light: #f0f4ff;
-            --bubble-ai-dark: #1e293b;
-            --bubble-user-light: #3b82f6;
-            --bubble-user-dark: #60a5fa;
-            --card-light: #ffffff;
-            --card-dark: #1f2937;
-            --border-light: #e5e7eb;
-            --border-dark: #374151;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>⛏️ LAI - Mesin Pencarian| by Lionbepthd</title>
+  <link href="https://fonts.googleapis.com/css2?family=Minecraftia&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            margin: 0;
-            padding: 0;
-            color: var(--text-color);
-            min-height: 100vh;
-            transition: all 0.3s ease;
-            overflow-x: hidden;
-        }
+    body {
+      font-family: 'Minecraftia', sans-serif;
+      background: linear-gradient(to bottom, #4a752c 0%, #3a5f20 100%);
+      color: #fff;
+      min-height: 100vh;
+      padding: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: start;
+    }
 
-        /* Background Animasi */
-        .background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-        }
+    .chat-container {
+      width: 100%;
+      max-width: 680px;
+      background: #8B4513;
+      border: 8px solid #5D2906;
+      border-radius: 0;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.7);
+      display: flex;
+      flex-direction: column;
+      height: 92vh;
+      position: relative;
+    }
 
-        .particle {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(59, 130, 246, 0.2);
-            animation: float 15s infinite linear;
-        }
+    .chat-header {
+      background: #D2691E;
+      padding: 16px;
+      text-align: center;
+      font-size: 26px;
+      text-shadow: 2px 2px 0 #000;
+      letter-spacing: 2px;
+      border-bottom: 4px solid #5D2906;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
 
-        @keyframes float {
-            0% {
-                transform: translateY(0) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-1000px) rotate(720deg);
-                opacity: 0;
-            }
-        }
+    .chat-header::before {
+      content: "🔍";
+      font-size: 28px;
+    }
 
-        /* Dark/Light Mode */
-        body.light-mode {
-            --primary-color: var(--primary-light);
-            --bg-color: var(--bg-light);
-            --text-color: var(--text-light);
-            --ai-bubble: var(--bubble-ai-light);
-            --user-bubble: var(--bubble-user-light);
-            --card-color: var(--card-light);
-            --border-color: var(--border-light);
-        }
+    .chat-messages {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: rgba(0,0,0,0.25);
+      position: relative;
+    }
 
-        body.dark-mode {
-            --primary-color: var(--primary-dark);
-            --bg-color: var(--bg-dark);
-            --text-color: var(--text-dark);
-            --ai-bubble: var(--bubble-ai-dark);
-            --user-bubble: var(--bubble-user-dark);
-            --card-color: var(--card-dark);
-            --border-color: var(--border-dark);
-        }
+    .message-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
 
-        /* Layout Utama */
-        .app-container {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            transition: all 0.3s ease;
-        }
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border: 2px solid #5D2906;
+      background-size: cover;
+      background-position: center;
+      image-rendering: pixelated;
+    }
 
-        header {
-            background-color: var(--card-color);
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-            z-index: 10;
-            transition: all 0.3s ease;
-        }
+    .message {
+      max-width: 80%;
+      padding: 14px 18px;
+      border-radius: 8px;
+      font-size: 16px;
+      line-height: 1.4;
+      position: relative;
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
 
-        .logo {
-            font-weight: 600;
-            font-size: 1.5rem;
-            color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+    @keyframes popIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
 
-        .logo i {
-            font-size: 1.2em;
-        }
+    .user-message {
+      background: #3a5f20;
+      border: 3px solid #2e4a18;
+    }
 
-        .controls {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
+    .ai-message {
+      background: #5D2906;
+      border: 3px solid #3a1a04;
+    }
 
-        .theme-toggle {
-            background: none;
-            border: none;
-            color: var(--text-color);
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
+    .ai-message a {
+      color: #FFD700;
+      text-decoration: underline;
+      font-weight: bold;
+    }
 
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
+    .ai-message a:hover {
+      color: #FFA500;
+    }
 
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            max-width: 1200px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 1.5rem;
-            box-sizing: border-box;
-            position: relative;
-            z-index: 1;
-        }
+    .input-area {
+      display: flex;
+      padding: 14px;
+      background: #5D2906;
+      border-top: 4px solid #3a1a04;
+    }
 
-        /* Chat Interface */
-        .chat-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background-color: var(--card-color);
-            border-radius: 1rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            transition: all 0.3s ease;
-            border: 1px solid var(--border-color);
-        }
+    #user-input {
+      flex: 1;
+      padding: 12px;
+      border: 4px solid #3a1a04;
+      border-radius: 0;
+      background: #8B4513;
+      color: white;
+      font-family: 'Minecraftia', sans-serif;
+      font-size: 16px;
+      outline: none;
+    }
 
-        .chat-header {
-            padding: 1rem 1.5rem;
-            background-color: var(--primary-color);
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    #user-input::placeholder {
+      color: #ccc;
+    }
 
-        .chat-title {
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
+    #send-btn {
+      margin-left: 10px;
+      padding: 12px 22px;
+      background: #D2691E;
+      color: white;
+      border: 4px solid #8B4513;
+      border-radius: 0;
+      cursor: pointer;
+      font-family: 'Minecraftia', sans-serif;
+      font-size: 18px;
+      font-weight: bold;
+      text-shadow: 1px 1px 0 #000;
+      letter-spacing: 1px;
+      transition: all 0.2s;
+    }
 
-        .chat-status {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-        }
+    #send-btn:hover {
+      background: #FF8C00;
+      transform: translateY(-2px);
+    }
 
-        .status-indicator {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background-color: #10b981;
-        }
+    .particle {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: #D2691E;
+      border-radius: 2px;
+      pointer-events: none;
+      opacity: 0.8;
+    }
 
-        .chat-box {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
+    .footer {
+      text-align: center;
+      padding: 8px;
+      background: #5D2906;
+      border-top: 3px solid #3a1a04;
+      font-size: 14px;
+      color: #FFD700;
+      letter-spacing: 1px;
+    }
 
-        .message {
-            display: flex;
-            flex-direction: column;
-            max-width: 85%;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .message-content {
-            padding: 0.75rem 1rem;
-            border-radius: 1rem;
-            line-height: 1.6;
-            word-wrap: break-word;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        }
-
-        .ai-message {
-            align-items: flex-start;
-        }
-
-        .ai-message .message-content {
-            background-color: var(--ai-bubble);
-            border-bottom-left-radius: 0.25rem;
-            color: var(--text-color);
-        }
-
-        .user-message {
-            align-items: flex-end;
-            margin-left: auto;
-        }
-
-        .user-message .message-content {
-            background-color: var(--user-bubble);
-            color: white;
-            border-bottom-right-radius: 0.25rem;
-        }
-
-        .message-time {
-            font-size: 0.75rem;
-            color: var(--text-color);
-            opacity: 0.7;
-            margin-top: 0.25rem;
-        }
-
-        .message-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-
-        .action-btn {
-            background: none;
-            border: none;
-            color: var(--text-color);
-            opacity: 0.7;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-
-        .action-btn:hover {
-            opacity: 1;
-        }
-
-        /* Input Area */
-        .input-container {
-            padding: 1rem;
-            background-color: var(--card-color);
-            border-top: 1px solid var(--border-color);
-            transition: all 0.3s ease;
-        }
-
-        .input-area {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        #user-input {
-            flex: 1;
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 1.5rem;
-            outline: none;
-            font-size: 1rem;
-            resize: none;
-            min-height: 20px;
-            max-height: 150px;
-            overflow-y: auto;
-            background-color: var(--card-color);
-            color: var(--text-color);
-            transition: all 0.3s ease;
-        }
-
-        #send-button {
-            width: 44px;
-            height: 44px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-
-        #send-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
-        }
-
-        /* Indicators */
-        .typing-indicator {
-            display: none;
-            padding: 0.75rem 1rem;
-            background-color: var(--ai-bubble);
-            border-radius: 1rem;
-            width: fit-content;
-            margin-bottom: 0.5rem;
-        }
-
-        .typing-dot {
-            height: 8px;
-            width: 8px;
-            background-color: var(--text-color);
-            opacity: 0.6;
-            border-radius: 50%;
-            display: inline-block;
-            margin: 0 2px;
-            animation: typingAnimation 1.4s infinite ease-in-out;
-        }
-
-        @keyframes typingAnimation {
-            0%, 60%, 100% { transform: translateY(0); opacity: 0.6; }
-            30% { transform: translateY(-4px); opacity: 1; }
-        }
-
-        .search-indicator {
-            display: none;
-            padding: 0.75rem 1rem;
-            background-color: rgba(16, 185, 129, 0.1);
-            border-radius: 1rem;
-            width: fit-content;
-            font-size: 0.875rem;
-            color: #10b981;
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            margin-bottom: 0.5rem;
-        }
-
-        /* Features */
-        .features {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 0.5rem;
-        }
-
-        .feature-btn {
-            background: none;
-            border: none;
-            color: var(--primary-color);
-            cursor: pointer;
-            font-size: 0.875rem;
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.5rem;
-            transition: all 0.2s;
-        }
-
-        .feature-btn:hover {
-            background-color: rgba(59, 130, 246, 0.1);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .main-content {
-                padding: 1rem;
-            }
-            
-            .message {
-                max-width: 90%;
-            }
-            
-            header {
-                padding: 1rem;
-            }
-        }
-    </style>
+    .chat-messages::-webkit-scrollbar {
+      width: 10px;
+    }
+    .chat-messages::-webkit-scrollbar-track {
+      background: #3a1a04;
+    }
+    .chat-messages::-webkit-scrollbar-thumb {
+      background: #D2691E;
+      border-radius: 5px;
+    }
+  </style>
 </head>
-<body class="light-mode">
-    <!-- Background Animasi -->
-    <div class="background" id="background"></div>
-    
-    <div class="app-container">
-        <header>
-            <div class="logo">
-                <i class="fas fa-robot"></i>
-                <span>Lionzone AI</span>
-            </div>
-            <div class="controls">
-                <button class="theme-toggle" id="theme-toggle" title="Toggle dark mode">
-                    <i class="fas fa-moon"></i>
-                </button>
-            </div>
-        </header>
-        
-        <main class="main-content">
-            <div class="chat-container">
-                <div class="chat-header">
-                    <div class="chat-title">Asisten AI</div>
-                    <div class="chat-status">
-                        <div class="status-indicator"></div>
-                        <span>Online</span>
-                    </div>
-                </div>
-                
-                <div class="chat-box" id="chat-box">
-                    <div class="message ai-message">
-                        <div class="message-content">
-                            Halo! Saya Lionzone AI dengan kemampuan:
-                            <ul>
-                                <li>Mencari jawaban dari Wikipedia</li>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                            </ul>
-                            Apa yang bisa saya bantu?
-                        </div>
-                        <div class="message-time">Baru saja</div>
-                    </div>
-                </div>
-                
-                <div class="typing-indicator" id="typing-indicator">
-                    <span class="typing-dot"></span>
-                    <span class="typing-dot"></span>
-                    <span class="typing-dot"></span>
-                </div>
-                
-                <div class="search-indicator" id="search-indicator">
-                    <i class="fas fa-search"></i> Mencari informasi terbaru...
-                </div>
-                
-                <div class="input-container">
-                    <div class="input-area">
-                        <textarea id="user-input" placeholder="Tanyakan apa saja..." rows="1"></textarea>
-                        <button id="send-button">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </div>
-                    <div class="features">
-                        <button class="feature-btn" id="voice-btn">
-                            <i class="fas fa-microphone"></i> Suara
-                        </button>
-                        <button class="feature-btn" id="clear-btn">
-                            <i class="fas fa-trash-alt"></i> Bersihkan
-                        </button>
-                        <button class="feature-btn" id="suggest-btn">
-                            <i class="fas fa-lightbulb"></i> Saran
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </main>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">LAI - MESIN PENCARIAN</div>
+    <div class="chat-messages" id="chat-messages">
+      <!-- Pesan akan muncul di sini -->
     </div>
+    <div class="input-area">
+      <input type="text" id="user-input" placeholder="Cari sesuatu dengan LAI..." autocomplete="off" />
+      <button id="send-btn">CARI</button>
+    </div>
+    <div class="footer">
+      © 2025 Lionbepthd • All Rights Reserved
+    </div>
+  </div>
 
-    <script>
-        // DOM Elements
-        const chatBox = document.getElementById('chat-box');
-        const userInput = document.getElementById('user-input');
-        const sendButton = document.getElementById('send-button');
-        const typingIndicator = document.getElementById('typing-indicator');
-        const searchIndicator = document.getElementById('search-indicator');
-        const themeToggle = document.getElementById('theme-toggle');
-        const voiceBtn = document.getElementById('voice-btn');
-        const clearBtn = document.getElementById('clear-btn');
-        const suggestBtn = document.getElementById('suggest-btn');
-        const background = document.getElementById('background');
+  <script>
+    // === AUDIO ===
+    function playClickSound() {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = 300 + Math.random() * 200;
+      gain.gain.value = 0.1;
+      osc.start();
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+    }
 
-        // Inisialisasi tema
-        let darkMode = localStorage.getItem('darkMode') === 'true';
-        updateTheme();
+    function playNotifySound() {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.value = 600;
+      gain.gain.value = 0.08;
+      osc.start();
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+    }
 
-        // Background animasi
-        createParticles();
+    // === AVATAR: LAI & Pengguna ===
+    const LAI_AVATAR = "https://ibb.co.com/398Kywhp";
+    const USER_AVATAR = "https://ibb.co.com/SWSTzGf";
 
-        // Auto-resize textarea
-        userInput.addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = (this.scrollHeight) + 'px';
-        });
+    const chatMessages = document.getElementById('chat-messages');
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
 
-        // Fungsi untuk membuat partikel background
-        function createParticles() {
-            const particleCount = darkMode ? 30 : 15;
-            const particleSizeBase = darkMode ? 2 : 3;
-            const particleOpacity = darkMode ? 0.1 : 0.2;
-            
-            background.innerHTML = '';
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
-                
-                const size = Math.random() * 5 + particleSizeBase;
-                const posX = Math.random() * window.innerWidth;
-                const delay = Math.random() * 15;
-                const duration = 10 + Math.random() * 20;
-                
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                particle.style.left = `${posX}px`;
-                particle.style.bottom = `-${size}px`;
-                particle.style.animationDelay = `${delay}s`;
-                particle.style.animationDuration = `${duration}s`;
-                particle.style.opacity = particleOpacity;
-                
-                background.appendChild(particle);
-            }
-        }
+    window.addEventListener('load', () => {
+      addMessage("Halo! Aku **LAI** 🔍\nMesin pencarian dari Lionbepthd!\nCoba tanyakan:\n• 'Apa itu redstone?'\n• 'Wikipedia tentang gurita'\n• 'Video cara membuat kue'", false);
+    });
 
-        // Fungsi untuk update tema
-        function updateTheme() {
-            if (darkMode) {
-                document.body.classList.remove('light-mode');
-                document.body.classList.add('dark-mode');
-                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-                localStorage.setItem('darkMode', 'true');
-            } else {
-                document.body.classList.remove('dark-mode');
-                document.body.classList.add('light-mode');
-                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-                localStorage.setItem('darkMode', 'false');
-            }
-            createParticles();
-        }
+    function addMessage(text, isUser = false) {
+      const row = document.createElement('div');
+      row.classList.add('message-row');
 
-        // Toggle tema
-        themeToggle.addEventListener('click', () => {
-            darkMode = !darkMode;
-            updateTheme();
-        });
+      const avatar = document.createElement('div');
+      avatar.classList.add('avatar');
+      avatar.style.backgroundImage = `url(${isUser ? USER_AVATAR : LAI_AVATAR})`;
 
-        // Fungsi untuk mendapatkan waktu sekarang
-        function getCurrentTime() {
-            const now = new Date();
-            const hours = now.getHours().toString().padStart(2, '0');
-            const minutes = now.getMinutes().toString().padStart(2, '0');
-            return `${hours}:${minutes}`;
-        }
+      const messageDiv = document.createElement('div');
+      messageDiv.classList.add('message');
+      messageDiv.classList.add(isUser ? 'user-message' : 'ai-message');
 
-        // Fungsi untuk menambahkan pesan ke chat box
-        function addMessage(sender, message, sources = null) {
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add('message');
-            messageDiv.classList.add(sender + '-message');
-            
-            const messageContent = document.createElement('div');
-            messageContent.classList.add('message-content');
-            
-            // Format pesan dengan line breaks dan markdown sederhana
-            let formattedMessage = message
-                .replace(/\n/g, '<br>')
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                .replace(/`(.*?)`/g, '<code>$1</code>');
-            
-            messageContent.innerHTML = formattedMessage;
-            
-            const messageTime = document.createElement('div');
-            messageTime.classList.add('message-time');
-            messageTime.textContent = getCurrentTime();
-            
-            messageDiv.appendChild(messageContent);
-            
-            if (sources) {
-                const sourcesDiv = document.createElement('div');
-                sourcesDiv.classList.add('sources');
-                sourcesDiv.innerHTML = `<strong>Sumber:</strong> ${sources}`;
-                messageDiv.appendChild(sourcesDiv);
-            }
-            
-            const messageActions = document.createElement('div');
-            messageActions.classList.add('message-actions');
-            
-            const copyBtn = document.createElement('button');
-            copyBtn.classList.add('action-btn');
-            copyBtn.innerHTML = '<i class="far fa-copy"></i> Salin';
-            copyBtn.addEventListener('click', () => {
-                navigator.clipboard.writeText(message);
-                copyBtn.innerHTML = '<i class="fas fa-check"></i> Tersalin!';
-                setTimeout(() => {
-                    copyBtn.innerHTML = '<i class="far fa-copy"></i> Salin';
-                }, 2000);
-            });
-            
-            messageActions.appendChild(copyBtn);
-            messageDiv.appendChild(messageActions);
-            messageDiv.appendChild(messageTime);
-            
-            chatBox.appendChild(messageDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
+      if (typeof text === 'string' && text.includes('<a')) {
+        messageDiv.innerHTML = text.replace(/\n/g, '<br>');
+      } else {
+        messageDiv.innerHTML = text.replace(/\n/g, '<br>');
+      }
 
-        // Fungsi untuk mencari di Wikipedia API
-        async function searchWikipedia(query) {
-            try {
-                const encodedQuery = encodeURIComponent(query);
-                const url = `https://id.wikipedia.org/w/api.php?action=query&format=json&list=search&srsearch=${encodedQuery}&origin=*`;
-                
-                const response = await fetch(url);
-                const data = await response.json();
-                
-                if (data.query?.search?.length > 0) {
-                    const firstResult = data.query.search[0];
-                    const pageUrl = `https://id.wikipedia.org/wiki/${encodeURIComponent(firstResult.title.replace(/ /g, '_'))}`;
-                    
-                    return {
-                        answer: `Menurut Wikipedia: ${firstResult.snippet.replace(/<span class="searchmatch">|<\/span>/g, '')}... [Baca selengkapnya di Wikipedia]`,
-                        source: `<a href="${pageUrl}" target="_blank" style="color: var(--primary-color);">Wikipedia: ${firstResult.title}</a>`
-                    };
-                }
-            } catch (error) {
-                console.error("Error searching Wikipedia:", error);
-            }
-            return null;
-        }
+      row.appendChild(avatar);
+      row.appendChild(messageDiv);
+      chatMessages.appendChild(row);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
 
-        // Fungsi untuk mendapatkan respon AI
-        async function getAIResponse(userMessage) {
-            // Tampilkan indikator pencarian
-            searchIndicator.style.display = 'block';
-            chatBox.scrollTop = chatBox.scrollHeight;
-            
-            // Cari di Wikipedia
-            const wikipediaResult = await searchWikipedia(userMessage);
-            
-            // Sembunyikan indikator pencarian
-            searchIndicator.style.display = 'none';
-            
-            // Jika ada hasil dari Wikipedia, kembalikan
-            if (wikipediaResult) {
-                return wikipediaResult;
-            }
-            
-            // Tampilkan indikator mengetik
-            typingIndicator.style.display = 'block';
-            chatBox.scrollTop = chatBox.scrollHeight;
-            
-            // Delay untuk simulasi AI "berpikir"
-            await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
-            
-            typingIndicator.style.display = 'none';
-            
-            // Pengetahuan dasar AI
-            const knowledgeBase = {
-                "halo|hai|hi|hello": "Halo! Ada yang bisa saya bantu? Saya bisa mencari informasi dari berbagai sumber untuk Anda.",
-                "nama kamu|siapa kamu": "Saya adalah Lionzone AI dengan kemampuan pencarian real-time. Saya bisa membantu menjawab pertanyaan Anda dengan mencari informasi terbaru dari internet.",
-                "mode gelap|dark mode": "Anda bisa mengubah antara mode gelap dan terang dengan tombol bulan/matahari di pojok kanan atas.",
-                "terima kasih|makasih": "Sama-sama! Senang bisa membantu Anda. Jika ada pertanyaan lain, jangan ragu untuk bertanya.",
-                "fitur|apa yang bisa kamu lakukan": "Saya memiliki beberapa fitur :\n1. Pencarian informasi real-time\n2. Antarmuka dengan dark/light mode\n3. Background animasi dinamis\n4. Dan masih banyak lagi!"
-            };
-            
-            // Cari jawaban yang cocok
-            for (const [questions, answer] of Object.entries(knowledgeBase)) {
-                const questionPatterns = questions.split('|');
-                for (const pattern of questionPatterns) {
-                    const regex = new RegExp(pattern, 'i');
-                    if (regex.test(userMessage)) {
-                        return { answer, source: "Pengetahuan dasar AI" };
-                    }
-                }
-            }
-            
-            return {
-                answer: "Maaf, saya tidak menemukan jawaban yang tepat untuk pertanyaan Anda. Coba gunakan kata kunci yang lebih spesifik atau tanyakan hal lain.",
-                source: null
-            };
-        }
+      if (!isUser) playNotifySound();
+    }
 
-        // Event listener untuk tombol kirim
-        sendButton.addEventListener('click', async function() {
-            const message = userInput.value.trim();
-            if (message) {
-                addMessage('user', message);
-                userInput.value = '';
-                userInput.style.height = 'auto';
-                
-                const { answer, source } = await getAIResponse(message);
-                addMessage('ai', answer, source);
-            }
-        });
+    function createParticles(x, y) {
+      const colors = ['#D2691E', '#8B4513', '#3a5f20', '#FFD700'];
+      for (let i = 0; i < 12; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        particle.style.left = x + 'px';
+        particle.style.top = y + 'px';
+        particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        document.body.appendChild(particle);
 
-        // Event listener untuk tombol enter
-        userInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendButton.click();
-            }
-        });
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 2 + Math.random() * 4;
+        const vx = Math.cos(angle) * speed;
+        const vy = Math.sin(angle) * speed;
 
-        // Tombol suara (placeholder)
-        voiceBtn.addEventListener('click', function() {
-            addMessage('ai', 'Fitur suara sedang dalam pengembangan. Untuk saat ini, silakan ketik pertanyaan Anda.');
-        });
+        let opacity = 1;
+        const animate = () => {
+          const rect = particle.getBoundingClientRect();
+          if (opacity <= 0 || rect.top > window.innerHeight || rect.left > window.innerWidth || rect.right < 0) {
+            particle.remove();
+            return;
+          }
+          particle.style.transform = `translate(${vx * 2}px, ${vy * 2}px)`;
+          opacity -= 0.03;
+          particle.style.opacity = opacity;
+          requestAnimationFrame(animate);
+        };
+        requestAnimationFrame(animate);
+      }
+    }
 
-        // Tombol bersihkan chat
-        clearBtn.addEventListener('click', function() {
-            chatBox.innerHTML = `
-                <div class="message ai-message">
-                    <div class="message-content">
-                        Percakapan baru dimulai! Ada yang bisa saya bantu?
-                    </div>
-                    <div class="message-time">${getCurrentTime()}</div>
-                </div>
-            `;
-        });
+    function searchOnline(query) {
+      const lower = query.toLowerCase().trim();
 
-        // Tombol saran pertanyaan
-        suggestBtn.addEventListener('click', function() {
-            const suggestions = [
-                "Apa ibu kota Norwegia?",
-                "Jelaskan tentang teori relativitas",
-                "Siapa penemu lampu pijar?",
-                "Apa arti kehidupan menurut filosofi?",
-                "Bagaimana cara kerja blockchain?"
-            ];
-            
-            const randomSuggestion = suggestions[Math.floor(Math.random() * suggestions.length)];
-            userInput.value = randomSuggestion;
-            userInput.focus();
-        });
+      if (lower.startsWith("wikipedia ")) {
+        const term = encodeURIComponent(query.substring(10));
+        const url = `https://id.wikipedia.org/wiki/${term}`;
+        window.open(url, '_blank');
+        return `Membuka halaman Wikipedia!\n🔍 ${query.substring(10)}\n<a href="${url}" target="_blank">Lihat di sini</a>`;
+      }
 
-        // Responsive background particles
-        window.addEventListener('resize', createParticles);
-    </script>
+      if (lower.includes("berita") || lower.includes("news")) {
+        const url = "https://www.google.com/search?q=berita+terbaru&tbm=nws";
+        window.open(url, '_blank');
+        return `Mencari berita terbaru!\n📰 <a href="${url}" target="_blank">Buka Google News</a>`;
+      }
+
+      if (lower.includes("youtube") || lower.includes("video")) {
+        const term = encodeURIComponent(query.replace(/(youtube|video)/gi, '').trim());
+        const url = `https://www.youtube.com/results?search_query=${term}`;
+        window.open(url, '_blank');
+        return `Mencari video di YouTube!\n🎥 <a href="${url}" target="_blank">Tonton di sini</a>`;
+      }
+
+      const encodedQuery = encodeURIComponent(query);
+      const googleUrl = `https://www.google.com/search?q=${encodedQuery}`;
+      window.open(googleUrl, '_blank');
+      return `Mencari di Google!\n🔎 <a href="${googleUrl}" target="_blank">Lihat hasilnya</a>`;
+    }
+
+    function getResponse(input) {
+      const lower = input.toLowerCase();
+
+      if (/(halo|hai|hello|hi)/.test(lower)) {
+        return "Halo! Aku **LAI** 🔍\nSiap bantu cari apa saja di internet!";
+      }
+      if (/(bantu|cara|bagaimana)/.test(lower)) {
+        return "Contoh pencarian:\n• 'Apa itu black hole?'\n• 'Wikipedia tentang lebah'\n• 'Video tutorial Excel'";
+      }
+      if (/(terima kasih|makasih|thanks)/.test(lower)) {
+        return "Sama-sama! 💎\nSemoga harimu penuh keberuntungan!";
+      }
+
+      const questionWords = ["apa", "siapa", "kapan", "di mana", "mengapa", "bagaimana", "berapa", "cara", "?"];
+      if (questionWords.some(word => lower.includes(word)) || input.split(' ').length > 2) {
+        return searchOnline(input);
+      }
+
+      return searchOnline(input);
+    }
+
+    function sendMessage() {
+      const text = userInput.value.trim();
+      if (!text) return;
+
+      addMessage(text, true);
+      userInput.value = '';
+      playClickSound();
+
+      const btnRect = sendBtn.getBoundingClientRect();
+      createParticles(btnRect.left + btnRect.width / 2, btnRect.top + btnRect.height / 2);
+
+      setTimeout(() => {
+        const response = getResponse(text);
+        addMessage(response);
+      }, 600);
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    userInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+  </script>
 </body>
 </html>
