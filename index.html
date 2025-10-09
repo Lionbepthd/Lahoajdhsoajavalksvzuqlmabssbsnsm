@@ -1,11 +1,35 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id"> <!-- Ganti 'en' ke 'id' jika konten utama dalam bahasa Indonesia -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LIONBEPTHD</title>
+    <!-- Ganti title agar lebih deskriptif -->
+    <title>LIONBEPTHD - Portal Game, AI, dan Aplikasi Kreatif</title>
+    
+    <!-- Meta deskripsi untuk hasil pencarian -->
+    <meta name="description" content="Jelajahi portal LIONBEPTHD. Temukan kumpulan game klasik, alat pencarian AI, generator kode, dan aplikasi kreatif lainnya buatan Lionbepthd.">
+    
+    <!-- Keywords (meskipun kurang penting sekarang, tetap bisa ditambahkan) -->
+    <meta name="keywords" content="LIONBEPTHD, Lionbepthd, Game Klasik, Kumpulan Game, AI Search, Mesin Pencari AI, Generator Kode, Pojav Launcher, Aplikasi Edukatif, Game Android, Web Game, Tugas, Proyek Siswa">
+    
+    <!-- Schema.org untuk SEO yang lebih kaya -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "LIONBEPTHD",
+      "alternateName": "Lionbepthd Portal",
+      "url": "https://lionbepthd.vercel.app/",
+      "description": "Portal utama untuk proyek-proyek kreatif Lionbepthd, termasuk game, alat AI, dan generator kode.",
+      "creator": {
+        "@type": "Person",
+        "name": "Lionbepthd"
+      }
+    }
+    </script>
+
     <style>
+        /* Gaya CSS asli tetap tidak berubah */
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
         
         :root {
@@ -28,7 +52,6 @@
             position: relative;
         }
         
-        /* Retro scanlines effect */
         .scanlines {
             position: fixed;
             top: 0;
@@ -44,7 +67,6 @@
             z-index: 1;
         }
         
-        /* Grid animation */
         .grid {
             position: fixed;
             top: 0;
@@ -64,7 +86,6 @@
             100% { background-position: 40px 40px; }
         }
         
-        /* Floating binary code animation */
         .binary-rain {
             position: absolute;
             top: 0;
@@ -89,7 +110,6 @@
             100% { transform: translateY(100vh); opacity: 0; }
         }
         
-        /* Main terminal container */
         .terminal {
             background-color: rgba(13, 2, 33, 0.8);
             border: 1px solid var(--neon-pink);
@@ -278,12 +298,10 @@
             100% { transform: scale(1); }
         }
         
-        /* Hidden elements */
         .hidden-element {
             display: none;
         }
         
-        /* Easter egg elements */
         .easter-egg {
             position: absolute;
             color: transparent;
@@ -292,7 +310,6 @@
             z-index: -10;
         }
         
-        /* Fake error messages */
         .fake-error {
             color: var(--neon-pink);
             margin-top: 15px;
@@ -301,7 +318,6 @@
             display: none;
         }
         
-        /* Decoy codes */
         .decoy-codes {
             position: absolute;
             top: 0;
@@ -315,14 +331,26 @@
     </style>
 </head>
 <body>
+    <!-- Tambahkan elemen tersembunyi dengan konten yang relevan untuk SEO -->
+    <div style="display: none;">
+        <h1>LIONBEPTHD - Portal Resmi Proyek Kreatif Lionbepthd</h1>
+        <p>Selamat datang di portal utama LIONBEPTHD. Di sini Anda dapat mengakses berbagai proyek menarik yang dibuat oleh Lionbepthd, termasuk:</p>
+        <ul>
+            <li>Kumpulan Game Simple dalam Satu Aplikasi</li>
+            <li>Mesin Pencari</li>
+            <li>Generator Kode</li>
+            <li>Control Pojav/Zalith</li>
+            <li></li>
+        </ul>
+        <p>LIONBEPTHD adalah platform inovatif yang menyatukan hiburan, kecerdasan buatan, dan alat pengembangan dalam satu tempat.</p>
+    </div>
+
     <div class="scanlines"></div>
     <div class="grid"></div>
     <div class="binary-rain" id="binaryRain"></div>
     
-    <!-- Decoy codes hidden in the background -->
     <div class="decoy-codes" id="decoyCodes"></div>
     
-    <!-- Easter eggs with fake codes -->
     <div class="easter-egg" id="easterEgg1">1020</div>
     <div class="easter-egg" id="easterEgg2">0101</div>
     
@@ -349,7 +377,6 @@
             > ACCESS GRANTED <
         </div>
         
-        <!-- Fake error messages -->
         <div class="fake-error" id="fakeError1">
             > SYSTEM ERROR: CODE 1910 INVALID <
         </div>
@@ -366,12 +393,11 @@
     </div>
 
     <script>
-        // Set current date in retro format
+        // Script asli tidak berubah
         const now = new Date();
         const dateStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear().toString().slice(-2)}`;
         document.getElementById('currentDate').textContent = dateStr;
         
-        // Create binary rain effect
         const binaryRain = document.getElementById('binaryRain');
         const binaryChars = ['0', '1'];
         
@@ -384,21 +410,17 @@
             digit.style.animationDelay = `${Math.random() * 5}s`;
             binaryRain.appendChild(digit);
             
-            // Remove digit after animation completes
             setTimeout(() => {
                 digit.remove();
             }, parseFloat(digit.style.animationDuration) * 1000);
         }
         
-        // Generate initial binary digits
         for (let i = 0; i < 50; i++) {
             setTimeout(createBinaryDigit, i * 200);
         }
         
-        // Continue generating binary digits
         setInterval(createBinaryDigit, 200);
         
-        // Create decoy codes in background
         const decoyCodes = document.getElementById('decoyCodes');
         const fakeCodes = ['1910', '1020', '0101', '9999', '0000', '1234', '4321', '2023'];
         
@@ -413,8 +435,6 @@
             decoyCodes.appendChild(decoy);
         });
         
-        // Valid codes (not shown to user)
-        // The codes are now obfuscated and hidden
         const validCodes = {
             '1910': 'https://lionbepthd.vercel.app/web.html',
             '1020': 'https://lionbepthd.vercel.app/tugas.html',
@@ -423,18 +443,15 @@
             '2009': 'https://lionbepthd.vercel.app/gcg.html'
         };
         
-        // Obfuscated code checking
         function checkCode() {
             const codeInput = document.getElementById('codeInput').value;
             const errorMsg = document.getElementById('errorMsg');
             const successMsg = document.getElementById('successMsg');
             const accessPrompt = document.getElementById('accessPrompt');
             
-            // Reset messages
             errorMsg.style.display = 'none';
             successMsg.style.display = 'none';
             
-            // Validate input
             if (codeInput.length !== 4 || !/^\d+$/.test(codeInput)) {
                 errorMsg.textContent = "> INVALID FORMAT: 4 DIGITS REQUIRED <";
                 errorMsg.style.display = 'block';
@@ -442,13 +459,10 @@
                 return;
             }
             
-            // Check if code is valid using obfuscated method
             if (isValidCode(codeInput)) {
-                // Show success message
                 successMsg.style.display = 'block';
                 accessPrompt.textContent = '> VERIFYING CREDENTIALS...';
                 
-                // Terminal glitch effect before redirect
                 document.querySelector('.terminal').classList.add('glitch');
                 document.querySelector('.terminal').setAttribute('data-text', '> ACCESS GRANTED <');
                 
@@ -456,7 +470,6 @@
                     window.location.href = getRedirectUrl(codeInput);
                 }, 1500);
             } else {
-                // Show random fake error sometimes
                 if (Math.random() > 0.7) {
                     const fakeErrors = document.querySelectorAll('.fake-error');
                     const randomError = fakeErrors[Math.floor(Math.random() * fakeErrors.length)];
@@ -475,9 +488,7 @@
             }
         }
         
-        // Obfuscated code validation
         function isValidCode(code) {
-            // Simple obfuscation - in a real scenario, this would be more complex
             const codes = {
                 '1910': true,
                 '1020': true,
@@ -485,11 +496,9 @@
                 '0891': true,
                 '2009': true
             };
-            
             return codes[code] || false;
         }
         
-        // Obfuscated URL retrieval
         function getRedirectUrl(code) {
             const urls = {
                 '1910': 'https://lionbepthd.vercel.app/web.html',
@@ -498,11 +507,9 @@
                 '0891': 'https://lionbepthd.vercel.app/pojav.html',
                 '2009': 'https://lionbepthd.vercel.app/gcg.html'
             };
-            
             return urls[code] || '#';
         }
         
-        // Quick access function for code 1910
         function quickAccess(code) {
             document.getElementById('codeInput').value = code;
             document.querySelector('.terminal').classList.add('pulse');
@@ -510,13 +517,11 @@
                 document.querySelector('.terminal').classList.remove('pulse');
             }, 500);
             
-            // Auto-submit after a brief delay
             setTimeout(() => {
                 checkCode();
             }, 300);
         }
         
-        // Shake terminal effect
         function shakeTerminal() {
             document.querySelector('.terminal').classList.add('shake');
             setTimeout(() => {
@@ -524,26 +529,21 @@
             }, 500);
         }
         
-        // Allow Enter key to submit
         document.getElementById('codeInput').addEventListener('keyup', function(e) {
             if (e.key === 'Enter') {
                 checkCode();
             }
         });
         
-        // Auto-focus input
         window.onload = function() {
             document.getElementById('codeInput').focus();
         };
         
-        // Restrict input to numbers only
         document.getElementById('codeInput').addEventListener('input', function(e) {
             this.value = this.value.replace(/[^0-9]/g, '');
         });
         
-        // Add some deception - if user tries to view source or inspect
         window.addEventListener('keydown', function(e) {
-            // Ctrl+U (view source) or F12 (dev tools)
             if ((e.ctrlKey && e.key === 'u') || e.key === 'F12') {
                 e.preventDefault();
                 document.body.innerHTML = '<div style="color: var(--neon-pink); text-align: center; margin-top: 50px;"><h1>SECURITY BREACH DETECTED</h1><p>Terminal locked for security reasons.</p></div>';
